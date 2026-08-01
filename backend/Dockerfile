@@ -7,24 +7,28 @@ COPY package*.json ./
 COPY prisma ./prisma/
 RUN npm install
 
-# Copy source code and build
+# Copy source code
 COPY . .
+
+# Generate Prisma Client
 RUN npx prisma generate
+
+# Build NestJS
 RUN npm run build
 
-# --- Production Image ---
+# -------------------------------
+# Production Image
+# -------------------------------
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy dependencies and built files
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./
 
 EXPOSE 3001
 
-# Command to run (including prisma db push or deploy, usually handled outside, but for simplicity here we just start)
-# Note: For production, consider using 'npx prisma migrate deploy' before starting
-CMD ["npm", "run", "start:prod"]
+CMD ["node","dist/src/main.js"]
