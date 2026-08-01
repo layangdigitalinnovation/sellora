@@ -1,0 +1,260 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String             @id @default(uuid())
+  email          String             @unique
+  password       String
+  name           String
+  avatar         String?
+  role           Role               @default(SELLER)
+  plan           Plan               @default(STARTER)
+  balance        Float              @default(0)
+  pendingBalance Float              @default(0)
+  bankName       String?
+  accountNumber  String?
+  accountHolder  String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  Store          Store[]
+  Withdrawal     Withdrawal[]
+  subscriptions  UserSubscription[]
+  posts          Post[]
+}
+
+enum Plan {
+  STARTER
+  PRO
+  BUSINESS
+  ENTERPRISE
+}
+
+model Store {
+  id              String     @id @default(uuid())
+  userId          String
+  user            User       @relation(fields: [userId], references: [id])
+  slug            String     @unique
+  customDomain    String?    @unique
+  name            String
+  description     String?
+  logoUrl         String?
+  theme           String?
+  primaryColor    String?
+  customCss       String?
+  headerImageUrl  String?
+  profileImageUrl String?
+  socialLinks     Json?
+  contentBgColor  String?
+  bannerImageUrl  String?
+  ctaText         String?
+  ctaLink         String?
+  isVerified      Boolean    @default(false)
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  products        Product[]
+  orders          Order[]
+  customers       Customer[]
+}
+
+model Product {
+  id                String        @id @default(uuid())
+  storeId           String
+  store             Store         @relation(fields: [storeId], references: [id])
+  type              ProductType
+  title             String
+  description       String?
+  price             Float
+  originalPrice     Float?
+  imageUrl          String?
+  fileUrl           String?
+  fileSize          Int?
+  mimeType          String?
+  isActive          Boolean       @default(true)
+  isPwyw            Boolean       @default(false)
+  minPwywPrice      Float?
+  flashSaleEndDate  DateTime?
+  flashSaleMaxQuota Int?
+  totalSales        Int           @default(0)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  orders            Order[]
+  bookingSlots      BookingSlot[]
+}
+
+enum ProductType {
+  DIGITAL_FILE
+  LINK
+  BUNDLE
+  BOOKING
+  EVENT
+}
+
+model Order {
+  id             String       @id @default(uuid())
+  storeId        String
+  store          Store        @relation(fields: [storeId], references: [id])
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id])
+  bookingSlotId  String?
+  bookingSlot    BookingSlot? @relation(fields: [bookingSlotId], references: [id])
+  buyerEmail     String
+  buyerName      String
+  buyerPhone     String?
+  buyerAddress   String?
+  amount         Float
+  status         OrderStatus  @default(PENDING)
+  paymentGateway String?
+  paymentMethod  String?
+  paymentRef     String?
+  externalId     String?
+  paidAt         DateTime?
+  downloadUrl    String?
+  downloadExpiry DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model Customer {
+  id          String    @id @default(uuid())
+  storeId     String
+  store       Store     @relation(fields: [storeId], references: [id])
+  email       String
+  name        String
+  phone       String?
+  totalSpent  Float     @default(0)
+  totalOrders Int       @default(0)
+  tags        String[]
+  notes       String?
+  lastOrderAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Withdrawal {
+  id            String           @id @default(uuid())
+  userId        String
+  user          User             @relation(fields: [userId], references: [id])
+  amount        Float
+  fee           Float
+  netAmount     Float
+  bankName      String
+  accountNumber String
+  accountHolder String
+  status        WithdrawalStatus @default(PENDING)
+  processedAt   DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+enum WithdrawalStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model BookingSlot {
+  id              String   @id @default(uuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  startTime       DateTime
+  endTime         DateTime
+  maxParticipants Int      @default(1)
+  meetingLink     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  orders          Order[]
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid())
+  storeId   String
+  productId String?
+  eventType String // VIEW, CHECKOUT_CLICK
+  visitorId String?
+  createdAt DateTime @default(now())
+
+  @@index([storeId, eventType])
+}
+
+enum Role {
+  SELLER
+  ADMIN
+}
+
+model SubscriptionPackage {
+  id            String             @id @default(uuid())
+  name          String
+  slug          String             @unique
+  price         Float
+  billingPeriod String // e.g., "MONTHLY" or "YEARLY"
+  features      Json
+  isActive      Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  subscriptions UserSubscription[]
+}
+
+model UserSubscription {
+  id         String              @id @default(uuid())
+  userId     String
+  user       User                @relation(fields: [userId], references: [id])
+  packageId  String
+  package    SubscriptionPackage @relation(fields: [packageId], references: [id])
+  status     SubscriptionStatus  @default(PENDING)
+  startDate  DateTime            @default(now())
+  endDate    DateTime?
+  paymentRef String?
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  posts     Post[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  title       String
+  slug        String    @unique
+  content     String    @db.Text
+  excerpt     String?   @db.Text
+  coverImage  String?
+  published   Boolean   @default(false)
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

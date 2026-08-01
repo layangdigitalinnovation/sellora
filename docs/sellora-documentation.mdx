@@ -1,0 +1,102 @@
+---
+title: Sellora Platform Documentation
+description: Dokumentasi lengkap fitur, arsitektur, dan alur kerja (flow) dari platform Sellora.
+version: 1.0.0
+---
+
+# Sellora: The Ultimate Digital Creator Platform
+
+Sellora adalah platform *all-in-one* yang dirancang khusus untuk kreator digital di Indonesia. Sellora memungkinkan kreator untuk menjual produk digital (E-book, Video Course, Preset, dll) dan layanan (Konsultasi, Event, Live Class) dengan perlindungan aset tingkat tinggi, *white-labeling*, dan analitik canggih.
+
+---
+
+## 🌟 Fitur Utama (Core Features)
+
+### 1. Storefront & White-labeling
+- **Custom Domain (PRO):** Seller dapat menggunakan domain sendiri (misal: `kelas.nama-kreator.com`).
+- **Dynamic Theming:** Kustomisasi warna utama (*primary color*), *background*, hingga jenis *font* (Inter, Montserrat, Jakarta Sans, dll).
+- **Rich Bio & Social Links:** Tampilan *link-in-bio* yang estetik terintegrasi dengan Instagram, TikTok, YouTube, dan X.
+
+### 2. Manajemen Produk Digital
+- **Tipe Produk Bervariasi:** Mendukung penjualan File Digital (PDF/ZIP/MP4), Link Akses rahasia, dan Booking/Konsultasi.
+- **Pay What You Want (PWYW):** Opsi harga dinamis. Seller dapat menentukan "Harga Minimum", dan pembeli dapat membayar lebih jika mereka mau mendukung kreator.
+- **Flash Sale & Scarcity:** Penghitung waktu mundur otomatis (*Countdown Timer*) dan batas kuota maksimal pembelian untuk menciptakan efek FOMO.
+
+### 3. Perlindungan Aset Ekstra Ketat (Secure Delivery)
+Sellora meminimalisir pembajakan produk digital melalui beberapa lapisan keamanan:
+- **Cloudflare R2 Presigned URLs:** File tidak diekspos secara publik. Pembeli hanya mendapat URL sementara yang akan kedaluwarsa otomatis (misal dalam 15 menit).
+- **Secure Video Player:** Video tidak bisa diunduh sembarangan, fungsi *klik-kanan* (Context Menu) dinonaktifkan, dan source URL disembunyikan.
+- **Dynamic PDF Watermarking:** Server akan menyisipkan nama, email, dan nomor HP pembeli ke dalam setiap halaman PDF secara dinamis saat file diakses, sehingga jika file bocor, identitas penyebar dapat dilacak.
+
+### 4. Smart Booking System
+- **Time Slot Management:** Untuk kelas *live* atau konsultasi, seller bisa membuat beberapa sesi jadwal.
+- **Temporary Slot Lock:** Saat pembeli sedang dalam proses *checkout* (berada di halaman pembayaran), tiket/kursi akan dikunci (*Holding State*) selama 10 menit. Mencegah bentrok/rebutan jadwal di detik yang sama.
+
+### 5. Analytics & Dashboard
+- **Real-time Conversion Funnel:** Memantau metrik kunjungan produk (Views) -> Klik tombol Checkout (Clicks) -> Konversi Penjualan (Sales).
+- **Session Tracking:** Mencegah spam *views/clicks* menggunakan Session ID (Cookie 24 jam).
+
+### 6. Sistem Pembayaran & Pencairan
+- **Xendit Integration:** Menerima berbagai metode pembayaran lokal (QRIS, Virtual Account, E-Wallet, Retail).
+- **Instant Payouts:** Seller dapat mencairkan saldo pendapatan ke rekening bank/E-Wallet kapan saja secara instan dengan biaya admin *flat* Rp 3.500.
+
+---
+
+## 🔄 Alur Pengguna (User Flows)
+
+### A. Seller Flow (Alur Penjual)
+1. **Registrasi & Setup Toko:**
+   - Kreator mendaftar dan mengatur profil toko (Logo, Banner, Tema, Link Sosial).
+2. **Pembuatan Produk:**
+   - Kreator mengunggah aset ke **Cloudflare R2** (via platform).
+   - Menentukan detail harga (Normal, Flash Sale, atau PWYW).
+   - Jika tipe Konsultasi, kreator mengatur *Booking Slots* (waktu dan kapasitas peserta).
+3. **Pemasaran:**
+   - Kreator membagikan link toko (`sellora.id/nama-kreator` atau *custom domain*).
+4. **Pemantauan & Penarikan Dana:**
+   - Melihat grafik konversi (*Funnel*) di Dasbor Analitik.
+   - Mengatur detail rekening bank dan melakukan penarikan dana instan dari saldo yang tersedia.
+
+### B. Buyer Flow (Alur Pembeli)
+1. **Eksplorasi Produk:**
+   - Pembeli mengunjungi halaman toko kreator (dioptimasi untuk *mobile* dan *desktop*).
+   - Pembeli melihat detail produk, termasuk sisa waktu *Flash Sale* (jika ada).
+2. **Checkout Super Cepat (Tanpa Login):**
+   - Pembeli tidak dipaksa membuat akun. Mereka cukup mengisi Nama, Email, dan No. HP.
+   - Jika produk PWYW, pembeli bisa memasukkan nominal pembayaran (dengan validasi otomatis jika di bawah batas minimum).
+   - Memilih jadwal *Booking* (jika produk tipe Konsultasi).
+3. **Proses Pembayaran:**
+   - Pembeli diarahkan ke *Payment Gateway* (Xendit Invoice).
+   - Kursi/slot dikunci selama 10 menit.
+4. **Konsumsi Konten (Order Success):**
+   - Setelah bayar, pembeli otomatis diarahkan ke halaman sukses.
+   - Pembeli langsung menikmati konten melalui **Secure PDF Viewer** atau **Secure Video Player** langsung di *browser*, tanpa berpindah aplikasi.
+
+### C. Payment Flow (Alur Transaksi & Sistem)
+Alur teknis transaksi antara Frontend, Backend (NestJS), dan Xendit:
+
+1. **Inisiasi (Frontend -> Backend):** 
+   - Frontend mengirim data keranjang (Product ID, Harga Kustom, Booking Slot) ke API `/payments/checkout`.
+2. **Validasi (Backend):**
+   - Sistem memvalidasi harga PWYW, kuota Flash Sale, dan ketersediaan *Booking Slot* (termasuk mengecek status PENDING di 10 menit terakhir).
+3. **Pembuatan Invoice (Backend -> Xendit):**
+   - Backend merekam data `Order` ke PostgreSQL dengan status `PENDING`.
+   - Backend memanggil Xendit API untuk men-*generate* URL Invoice.
+   - URL dikembalikan ke Frontend.
+4. **Pembayaran & Webhook (Xendit -> Backend):**
+   - Pembeli membayar via QRIS/VA.
+   - Xendit mengirimkan HTTP POST (Webhook) ke API `/payments/webhook`.
+   - Backend memvalidasi *Token Webhook*, lalu mengubah status `Order` menjadi `PAID`.
+   - Saldo kreator (`User.balance`) ditambahkan.
+5. **Akses Konten (Backend -> Frontend):**
+   - Pembeli mengakses halaman pesanan.
+   - Backend memanggil Cloudflare R2 untuk membuat *Presigned URL* atau langsung memproses *Watermark PDF* *on-the-fly*.
+
+---
+
+## 🛠 Tech Stack & Arsitektur
+- **Frontend:** Next.js 15 (App Router), React 19, Tailwind CSS v4, Recharts (Analitik), Lucide Icons.
+- **Backend:** NestJS, Prisma ORM, PostgreSQL.
+- **Storage:** Cloudflare R2 (S3 Compatible API).
+- **Payment Gateway:** Xendit.
+- **PDF Manipulation:** `pdf-lib` (Server-side rendering).
