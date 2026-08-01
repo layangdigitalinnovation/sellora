@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { CheckCircle2, Shield, CreditCard, ChevronRight, ArrowLeft } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export default function SubscriptionPage() {
+function SubscriptionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t, lang } = useLanguage();
@@ -283,5 +283,20 @@ export default function SubscriptionPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SubscriptionPage() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-[#F8FAFC]">
+        <div className="relative flex justify-center items-center">
+          <div className="absolute animate-ping w-16 h-16 rounded-full bg-indigo-400 opacity-20"></div>
+          <span className="relative z-10 animate-spin w-12 h-12 border-4 border-[#4361EE] border-t-transparent rounded-full shadow-lg"></span>
+        </div>
+      </div>
+    }>
+      <SubscriptionContent />
+    </Suspense>
   );
 }
