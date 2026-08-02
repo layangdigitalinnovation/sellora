@@ -254,7 +254,10 @@ model Post {
   author      User      @relation(fields: [authorId], references: [id])
   categoryId  String
   category    Category  @relation(fields: [categoryId], references: [id])
-  publishedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  publishedAt     DateTime?
+  metaTitle       String?
+  metaDescription String?
+  keywords        String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

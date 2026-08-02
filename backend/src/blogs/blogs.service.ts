@@ -51,6 +51,9 @@ export class BlogsService {
         authorId,
         categoryId: data.categoryId,
         publishedAt: data.published ? new Date() : null,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        keywords: data.keywords,
       }
     });
   }
@@ -79,6 +82,32 @@ export class BlogsService {
         name: data.name,
         slug
       }
+    });
+  }
+
+  async updateCategory(id: string, data: any) {
+    const slug = data.slug || data.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    return this.prisma.category.update({
+      where: { id },
+      data: {
+        ...(data.name && { name: data.name }),
+        ...(slug && { slug })
+      }
+    });
+  }
+
+  async deleteCategory(id: string) {
+    // Check if there are posts attached to this category
+    const postsCount = await this.prisma.post.count({
+      where: { categoryId: id }
+    });
+    
+    if (postsCount > 0) {
+      throw new Error('Cannot delete category because it has existing posts.');
+    }
+    
+    return this.prisma.category.delete({
+      where: { id }
     });
   }
 }

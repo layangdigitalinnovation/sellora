@@ -101,7 +101,7 @@ let PaymentsService = class PaymentsService {
                                 street_line1: data.buyerAddress
                             }] : undefined
                     },
-                    success_redirect_url: data.successRedirectUrl || `http://localhost:3000/${product.store.slug}/order/${order.id}`,
+                    success_redirect_url: `http://localhost:3000/payment-success?orderId=${order.id}&slug=${product.store.slug}`,
                     failure_redirect_url: data.failureRedirectUrl || `http://localhost:3000/${product.store.slug}`,
                     currency: 'IDR'
                 })
@@ -127,24 +127,29 @@ let PaymentsService = class PaymentsService {
             throw new common_1.BadRequestException('Invalid webhook token');
         }
         if (data.status === 'PAID' || data.status === 'SETTLED') {
-            const order = await this.prisma.order.update({
-                where: { id: data.external_id },
-                data: {
-                    status: 'PAID',
-                    paidAt: new Date(data.paid_at || new Date()),
-                    paymentMethod: data.payment_method,
-                },
-                include: { store: true }
-            });
-            if (order && order.store) {
-                await this.prisma.user.update({
-                    where: { id: order.store.userId },
+            try {
+                const order = await this.prisma.order.update({
+                    where: { id: data.external_id },
                     data: {
-                        balance: {
-                            increment: order.amount
-                        }
-                    }
+                        status: 'PAID',
+                        paidAt: new Date(data.paid_at || new Date()),
+                        paymentMethod: data.payment_method,
+                    },
+                    include: { store: true }
                 });
+                if (order && order.store) {
+                    await this.prisma.user.update({
+                        where: { id: order.store.userId },
+                        data: {
+                            balance: {
+                                increment: order.amount
+                            }
+                        }
+                    });
+                }
+            }
+            catch (e) {
+                console.warn(`Webhook warning: Order with external_id ${data.external_id} not found or could not be updated.`);
             }
         }
         return { success: true };

@@ -7,6 +7,9 @@ export declare class AnalyticsService {
         totalCustomers: number;
         totalOrders: number;
         totalRevenue: number;
+        customersTrend: number;
+        ordersTrend: number;
+        revenueTrend: number;
     }>;
     trackEvent(storeId: string, productId: string | undefined, eventType: string, visitorId: string): Promise<{
         id: string;

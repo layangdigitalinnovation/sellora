@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   if (!isAuthenticated) {
-    return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><span className="animate-spin w-8 h-8 border-4 border-[#4361EE] border-t-transparent rounded-full"></span></div>;
+    return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><span className="animate-spin w-8 h-8 border-4 border-[#7c2cff] border-t-transparent rounded-full"></span></div>;
   }
 
   if (pathname === '/admin/login') {
@@ -62,9 +62,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-slate-200 fixed h-full flex flex-col z-10">
         <div className="h-16 flex items-center px-6 border-b border-slate-100">
-          <div className="flex items-center gap-2 text-[#4361EE]">
-            <div className="w-8 h-8 rounded-lg bg-[#4361EE] text-white flex items-center justify-center font-black text-lg">A</div>
-            <span className="font-black text-xl tracking-tight text-slate-800">Admin</span>
+          <div className="flex items-center gap-2">
+            <svg className="w-8 h-8" viewBox="0 0 64 64" aria-hidden="true">
+              <defs><linearGradient id="kgadmin" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff8a00"/><stop offset=".42" stopColor="#f13e8e"/><stop offset="1" stopColor="#5f2cff"/></linearGradient></defs>
+              <rect x="8" y="7" width="13" height="50" rx="6.5" fill="url(#kgadmin)"/>
+              <path d="M25 32 47 8c4-4 11-1 11 5v4c0 2-1 4-3 6L42 35l13 8c2 1 3 3 3 5v3c0 6-7 9-12 6L25 44c-5-3-6-9-2-13l2-2v3Z" fill="url(#kgadmin)"/>
+            </svg>
+            <span className="font-bold text-xl tracking-tighter text-slate-900 leading-none flex flex-col justify-center" style={{ textAlign: 'left' }}>
+              KAMU<span className="text-[9px] text-slate-500 font-medium tracking-normal -mt-0.5">Admin Portal</span>
+            </span>
           </div>
         </div>
 
@@ -77,7 +83,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
                   isActive 
-                    ? 'bg-[#4361EE]/10 text-[#4361EE]' 
+                    ? 'bg-[#7c2cff]/10 text-[#7c2cff]' 
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
                 }`}
               >

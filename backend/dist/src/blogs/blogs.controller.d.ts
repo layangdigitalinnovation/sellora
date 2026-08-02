@@ -25,6 +25,9 @@ export declare class BlogsController {
         coverImage: string | null;
         published: boolean;
         publishedAt: Date | null;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        keywords: string | null;
         categoryId: string;
         authorId: string;
     })[]>;
@@ -51,6 +54,9 @@ export declare class BlogsController {
         coverImage: string | null;
         published: boolean;
         publishedAt: Date | null;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        keywords: string | null;
         categoryId: string;
         authorId: string;
     }>;
@@ -65,6 +71,9 @@ export declare class BlogsController {
         coverImage: string | null;
         published: boolean;
         publishedAt: Date | null;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        keywords: string | null;
         categoryId: string;
         authorId: string;
     }>;
@@ -79,6 +88,9 @@ export declare class BlogsController {
         coverImage: string | null;
         published: boolean;
         publishedAt: Date | null;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        keywords: string | null;
         categoryId: string;
         authorId: string;
     }>;
@@ -93,6 +105,9 @@ export declare class BlogsController {
         coverImage: string | null;
         published: boolean;
         publishedAt: Date | null;
+        metaTitle: string | null;
+        metaDescription: string | null;
+        keywords: string | null;
         categoryId: string;
         authorId: string;
     }>;
@@ -104,6 +119,20 @@ export declare class BlogsController {
         slug: string;
     }[]>;
     createCategory(data: any): Promise<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        slug: string;
+    }>;
+    updateCategory(id: string, data: any): Promise<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        slug: string;
+    }>;
+    deleteCategory(id: string): Promise<{
         id: string;
         name: string;
         createdAt: Date;

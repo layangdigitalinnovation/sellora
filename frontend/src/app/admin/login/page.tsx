@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#4361EE] text-white shadow-xl shadow-[#4361EE]/20 mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#7c2cff] text-white shadow-xl shadow-[#7c2cff]/20 mb-6">
             <ShieldCheck className="w-8 h-8" />
           </div>
           <h1 className="text-3xl font-black text-slate-800 tracking-tight">Admin Secure Login</h1>
@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@sellora.com"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 text-slate-800 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4361EE]/20 focus:border-[#4361EE] transition-all"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 text-slate-800 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#7c2cff]/20 focus:border-[#7c2cff] transition-all"
                   required
                 />
               </div>
@@ -91,7 +91,7 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 text-slate-800 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4361EE]/20 focus:border-[#4361EE] transition-all"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 text-slate-800 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#7c2cff]/20 focus:border-[#7c2cff] transition-all"
                   required
                 />
               </div>
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-[#4361EE] text-white py-4 rounded-xl font-black shadow-lg shadow-[#4361EE]/25 hover:bg-[#3551d1] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:translate-y-0"
+              className="w-full bg-[#7c2cff] text-white py-4 rounded-xl font-black shadow-lg shadow-[#7c2cff]/25 hover:bg-[#631fcc] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:translate-y-0"
             >
               {loading ? (
                 <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -113,7 +113,7 @@ export default function AdminLoginPage() {
 
         {/* Footer */}
         <p className="text-center text-slate-400 text-sm font-bold mt-8">
-          Sellora &copy; 2026 Admin Portal
+          KAMU &copy; 2026 Admin Portal
         </p>
       </div>
     </div>

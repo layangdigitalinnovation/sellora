@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Plus, Search, MoreVertical, Edit2, Trash2, Eye } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -8,24 +8,48 @@ import { useLanguage } from '@/contexts/LanguageContext';
 export default function AdminBlogList() {
   const { t } = useLanguage();
   const [search, setSearch] = useState('');
+  const [posts, setPosts] = useState<any[]>([]);
 
-  // Dummy data
-  const posts = [
-    {
-      id: '1',
-      title: 'How to Turn What You Know Into a Course on Sellora',
-      status: 'Published',
-      date: 'Jul 10, 2026',
-      views: 1205,
-    },
-    {
-      id: '2',
-      title: '7 Signals From Cannes Lions 2026 on Where the Creator Economy is Headed',
-      status: 'Draft',
-      date: 'Jun 25, 2026',
-      views: 0,
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const res = await fetch(`${apiUrl}/blogs?all=true`);
+      if (res.ok) {
+        const data = await res.json();
+        setPosts(data);
+      }
+    } catch (e) {
+      console.error('Failed to fetch posts', e);
     }
-  ];
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this post?')) return;
+    try {
+      const token = localStorage.getItem('admin_token');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const res = await fetch(`${apiUrl}/blogs/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        fetchPosts(); // Refresh the list
+      } else {
+        alert('Failed to delete post');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('An error occurred');
+    }
+  };
+
+
 
   return (
     <div className="space-y-6">
@@ -34,9 +58,14 @@ export default function AdminBlogList() {
           <h1 className="text-2xl font-black text-slate-800">{t('admin.blog') || 'Blog CMS'}</h1>
           <p className="text-slate-500 font-medium">Manage your platform's blog posts.</p>
         </div>
-        <Link href="/admin/blog/editor" className="bg-[#4361EE] text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-[#3651d4] transition-colors flex items-center gap-2">
-          <Plus className="w-4 h-4" /> New Post
-        </Link>
+        <div className="flex gap-3">
+          <Link href="/admin/blog/categories" className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
+            Manage Categories
+          </Link>
+          <Link href="/admin/blog/editor" className="bg-[#4361EE] text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-[#3651d4] transition-colors flex items-center gap-2">
+            <Plus className="w-4 h-4" /> New Post
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -76,22 +105,20 @@ export default function AdminBlogList() {
                 <td className="p-4 font-bold text-slate-800">{post.title}</td>
                 <td className="p-4">
                   <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                    post.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'
+                    post.published ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'
                   }`}>
-                    {post.status}
+                    {post.published ? 'Published' : 'Draft'}
                   </span>
                 </td>
-                <td className="p-4 text-sm text-slate-500 font-medium">{post.date}</td>
-                <td className="p-4 text-sm text-slate-500 font-bold text-right">{post.views.toLocaleString()}</td>
+                <td className="p-4 text-sm text-slate-500 font-medium">{new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                <td className="p-4 text-sm text-slate-500 font-bold text-right">0</td>
                 <td className="p-4 text-center">
-                  <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-1.5 text-slate-400 hover:text-[#4361EE] hover:bg-blue-50 rounded-lg transition-colors" title="View">
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <Link href={`/admin/blog/editor?id=${post.id}`} className="p-1.5 text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
+                  <div className="flex justify-center gap-2 transition-opacity">
+
+                    <Link href={`/admin/blog/editor?slug=${post.slug}`} className="p-1.5 text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
                       <Edit2 className="w-4 h-4" />
                     </Link>
-                    <button className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                    <button onClick={() => handleDelete(post.id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>

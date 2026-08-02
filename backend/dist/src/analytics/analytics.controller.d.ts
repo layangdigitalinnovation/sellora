@@ -7,6 +7,9 @@ export declare class AnalyticsController {
         totalCustomers: number;
         totalOrders: number;
         totalRevenue: number;
+        customersTrend: number;
+        ordersTrend: number;
+        revenueTrend: number;
     }>;
     trackEvent(body: {
         storeId: string;

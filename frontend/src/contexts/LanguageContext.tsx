@@ -54,7 +54,7 @@ const dictionaries = {
       main_store_url: 'MAIN STORE URL',
       copy: 'Copy',
       change_slug: 'Change Slug',
-      add_new_block: '+ Add New Block',
+      add_new_block: 'Add New Block',
       active_content_list: 'ACTIVE CONTENT LIST',
       appearance_customization: 'Appearance Customization',
       appearance_desc: 'Customize theme & colors',
@@ -274,7 +274,7 @@ const dictionaries = {
       main_store_url: 'URL TOKO UTAMA',
       copy: 'Salin',
       change_slug: 'Ubah Slug',
-      add_new_block: '+ Tambah Blok Baru',
+      add_new_block: 'Tambah Blok Baru',
       active_content_list: 'DAFTAR KONTEN AKTIF',
       appearance_customization: 'Kustomisasi Tampilan',
       appearance_desc: 'Sesuaikan tema & warna',
@@ -457,7 +457,7 @@ const dictionaries = {
 };
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Language>('en');
+  const [lang, setLangState] = useState<Language>('id');
 
   useEffect(() => {
     // Try to load language from localStorage on mount

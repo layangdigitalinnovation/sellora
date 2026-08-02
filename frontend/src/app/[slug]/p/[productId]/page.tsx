@@ -288,7 +288,7 @@ export default function ProductDetailPage() {
 
         {/* Checkout Modal */}
         {showCheckout && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center">
+          <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 backdrop-blur-md sm:items-center">
             <div className={`w-full max-w-[480px] p-6 rounded-t-3xl sm:rounded-3xl shadow-2xl relative animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-10 ${isDark ? 'bg-[#1E1E1E]' : 'bg-white'}`}>
               <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-6 sm:hidden"></div>
               
@@ -325,7 +325,6 @@ export default function ProductDetailPage() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

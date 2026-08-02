@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Re
 import { BlogsService } from './blogs.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('blogs')
+@Controller('api/blogs')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
 
@@ -19,7 +19,7 @@ export class BlogsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() data: any, @Req() req: any) {
-    return this.blogsService.createPost(data, req.user.id);
+    return this.blogsService.createPost(data, req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -43,5 +43,17 @@ export class BlogsController {
   @Post('categories')
   createCategory(@Body() data: any) {
     return this.blogsService.createCategory(data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('categories/:id')
+  updateCategory(@Param('id') id: string, @Body() data: any) {
+    return this.blogsService.updateCategory(id, data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('categories/:id')
+  deleteCategory(@Param('id') id: string) {
+    return this.blogsService.deleteCategory(id);
   }
 }

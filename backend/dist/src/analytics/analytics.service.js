@@ -23,7 +23,10 @@ let AnalyticsService = class AnalyticsService {
         });
         if (!store)
             throw new common_1.NotFoundException('Store not found');
-        const [totalProducts, totalCustomers, totalOrders, totalRevenue] = await Promise.all([
+        const now = new Date();
+        const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+        const [totalProducts, totalCustomers, totalOrders, totalRevenue, currCustomers, prevCustomers, currOrders, prevOrders, currRevenue, prevRevenue] = await Promise.all([
             this.prisma.product.count({ where: { storeId: store.id } }),
             this.prisma.customer.count({ where: { storeId: store.id } }),
             this.prisma.order.count({ where: { storeId: store.id, status: 'PAID' } }),
@@ -31,12 +34,30 @@ let AnalyticsService = class AnalyticsService {
                 where: { storeId: store.id, status: 'PAID' },
                 _sum: { amount: true },
             }),
+            this.prisma.customer.count({ where: { storeId: store.id, createdAt: { gte: thirtyDaysAgo } } }),
+            this.prisma.customer.count({ where: { storeId: store.id, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } }),
+            this.prisma.order.count({ where: { storeId: store.id, status: 'PAID', createdAt: { gte: thirtyDaysAgo } } }),
+            this.prisma.order.count({ where: { storeId: store.id, status: 'PAID', createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } }),
+            this.prisma.order.aggregate({
+                where: { storeId: store.id, status: 'PAID', createdAt: { gte: thirtyDaysAgo } },
+                _sum: { amount: true },
+            }),
+            this.prisma.order.aggregate({
+                where: { storeId: store.id, status: 'PAID', createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+                _sum: { amount: true },
+            })
         ]);
+        const calcTrend = (curr, prev) => prev === 0 ? (curr > 0 ? 100 : 0) : ((curr - prev) / prev) * 100;
+        const currRevVal = currRevenue._sum.amount || 0;
+        const prevRevVal = prevRevenue._sum.amount || 0;
         return {
             totalProducts,
             totalCustomers,
             totalOrders,
             totalRevenue: totalRevenue._sum.amount || 0,
+            customersTrend: calcTrend(currCustomers, prevCustomers),
+            ordersTrend: calcTrend(currOrders, prevOrders),
+            revenueTrend: calcTrend(currRevVal, prevRevVal)
         };
     }
     async trackEvent(storeId, productId, eventType, visitorId) {

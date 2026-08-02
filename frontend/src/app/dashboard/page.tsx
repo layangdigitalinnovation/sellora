@@ -72,7 +72,10 @@ export default function DashboardPage() {
     totalProducts: 0,
     totalCustomers: 0,
     totalOrders: 0,
-    totalRevenue: 0
+    totalRevenue: 0,
+    customersTrend: 0,
+    ordersTrend: 0,
+    revenueTrend: 0
   });
   const [activeTab, setActiveTab] = useState<View>('home');
   const [isLoading, setIsLoading] = useState(true);
@@ -119,7 +122,7 @@ export default function DashboardPage() {
     description: ''
   });
   const [storeAppearance, setStoreAppearance] = useState({
-    primaryColor: '#4361EE',
+    primaryColor: '#7c2cff',
     theme: 'Inter',
     customCss: 'list', // mapping layout to customCss
     headerImageUrl: '',
@@ -203,7 +206,7 @@ export default function DashboardPage() {
                 description: storeData.description || ''
               });
               setStoreAppearance({
-                primaryColor: storeData.primaryColor || '#4361EE',
+                primaryColor: storeData.primaryColor || '#7c2cff',
                 theme: storeData.theme || 'Inter',
                 customCss: storeData.customCss || 'list',
                 headerImageUrl: storeData.headerImageUrl || '',
@@ -509,10 +512,14 @@ export default function DashboardPage() {
     <>
       <div className="p-8 shrink-0">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-[#4361EE] rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-[#4361EE]/20 group-hover:rotate-6 transition-transform">
-            S
-          </div>
-          <span className="font-bold text-2xl tracking-tighter text-slate-800">Sellora</span>
+          <svg className="w-10 h-10" viewBox="0 0 64 64" aria-hidden="true">
+            <defs><linearGradient id="kgdash" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff8a00"/><stop offset=".42" stopColor="#f13e8e"/><stop offset="1" stopColor="#5f2cff"/></linearGradient></defs>
+            <rect x="8" y="7" width="13" height="50" rx="6.5" fill="url(#kgdash)"/>
+            <path d="M25 32 47 8c4-4 11-1 11 5v4c0 2-1 4-3 6L42 35l13 8c2 1 3 3 3 5v3c0 6-7 9-12 6L25 44c-5-3-6-9-2-13l2-2v3Z" fill="url(#kgdash)"/>
+          </svg>
+          <span className="font-bold text-2xl tracking-tighter text-slate-900 leading-none flex flex-col justify-center" style={{ textAlign: 'left' }}>
+            KAMU<span className="text-[10px] text-slate-500 font-medium tracking-normal -mt-1">Kelola Aktivitas Monetisasi</span>
+          </span>
         </Link>
       </div>
 
@@ -530,11 +537,11 @@ export default function DashboardPage() {
                 key={item.id}
                 onClick={() => { setActiveTab(item.id as View); setIsSidebarOpen(false); }}
                 className={`w-full flex items-center gap-3 px-5 py-3 rounded-2xl text-sm transition-all ${activeTab === item.id
-                    ? 'bg-indigo-50 text-[#4361EE] font-black'
+                    ? 'bg-indigo-50 text-[#7c2cff] font-black'
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-bold'
                   }`}
               >
-                <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-[#4361EE]' : 'text-slate-400'}`} />
+                <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-[#7c2cff]' : 'text-slate-400'}`} />
                 {item.label}
               </button>
             ))}
@@ -562,11 +569,11 @@ export default function DashboardPage() {
                   }
                 }}
                 className={`w-full flex items-center gap-3 px-5 py-3 rounded-2xl text-sm transition-all ${activeTab === item.id
-                    ? 'bg-indigo-50 text-[#4361EE] font-black'
+                    ? 'bg-indigo-50 text-[#7c2cff] font-black'
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-bold'
                   }`}
               >
-                <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-[#4361EE]' : 'text-slate-400'}`} />
+                <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-[#7c2cff]' : 'text-slate-400'}`} />
                 {item.label}
               </button>
             ))}
@@ -581,7 +588,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-indigo-100 border-t-[#4361EE] rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-indigo-100 border-t-[#7c2cff] rounded-full animate-spin"></div>
           <p className="font-black text-slate-400 text-xs tracking-widest uppercase">Memuat Dasbor...</p>
         </div>
       </div>
@@ -602,7 +609,7 @@ export default function DashboardPage() {
   if (user?.role === 'ADMIN') {
     return (
       <div className="min-h-screen bg-[#F8F9FC] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#4361EE]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#7c2cff]" />
       </div>
     );
   }
@@ -611,7 +618,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-[#F8F9FC] flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-white rounded-[3rem] p-12 text-center shadow-2xl border border-slate-100">
-          <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-8 text-[#4361EE]">
+          <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-8 text-[#7c2cff]">
             <Globe className="w-10 h-10" />
           </div>
           <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Siapkan Tokomu!</h2>
@@ -621,7 +628,7 @@ export default function DashboardPage() {
           <button
             onClick={handleCreateStore}
             disabled={isSubmitting}
-            className="w-full bg-[#4361EE] text-white py-5 rounded-2xl font-black shadow-xl shadow-[#4361EE]/20 hover:scale-105 transition-all"
+            className="w-full bg-[#7c2cff] text-white py-5 rounded-2xl font-black shadow-xl shadow-[#7c2cff]/20 hover:scale-105 transition-all"
           >
             {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : 'Aktifkan Sekarang'}
           </button>
@@ -674,7 +681,7 @@ export default function DashboardPage() {
             <div className="relative">
               <button
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                className="w-10 h-10 bg-indigo-50 text-[#4361EE] rounded-full flex items-center justify-center font-black text-sm hover:ring-2 ring-[#4361EE] ring-offset-2 transition-all focus:outline-none"
+                className="w-10 h-10 bg-indigo-50 text-[#7c2cff] rounded-full flex items-center justify-center font-black text-sm hover:ring-2 ring-[#7c2cff] ring-offset-2 transition-all focus:outline-none"
               >
                 {user?.name?.charAt(0)}
               </button>
@@ -713,12 +720,12 @@ export default function DashboardPage() {
                 {/* Account Card */}
                 <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-5">
-                    <div className="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center text-[#4361EE] font-black text-2xl">
+                    <div className="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center text-[#7c2cff] font-black text-2xl">
                       {user?.name?.charAt(0)}
                     </div>
                     <div>
                       <h3 className="font-black text-xl text-slate-900">{store?.name}</h3>
-                      <Link href={`/${store?.slug}`} target="_blank" className="text-sm font-bold text-[#4361EE] hover:underline flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity">
+                      <Link href={`/${store?.slug}`} target="_blank" className="text-sm font-bold text-[#7c2cff] hover:underline flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity">
                         {STORE_DOMAIN}/{store?.slug} <ExternalLink className="w-3.5 h-3.5" />
                       </Link>
                     </div>
@@ -730,7 +737,7 @@ export default function DashboardPage() {
                     >
                       <Gem className="w-4 h-4" /> Upgrade
                     </button>
-                    <button className="px-8 py-4 bg-[#4361EE] text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-100 hover:scale-105 transition-all flex items-center gap-2.5">
+                    <button className="px-8 py-4 bg-[#7c2cff] text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-100 hover:scale-105 transition-all flex items-center gap-2.5">
                       <Share2 className="w-4 h-4" /> {t('dashboard_content.share') || 'Bagikan'}
                     </button>
                     <button onClick={() => setActiveTab('settings')} className="p-4 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
@@ -743,7 +750,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                   {[
                     { label: t('dashboard_content.add_link') || 'Tambah Link', icon: Link2, color: 'bg-blue-50 text-blue-500' },
-                    { label: t('dashboard_content.digital_product') || 'Produk Digital', icon: ShoppingBag, color: 'bg-indigo-50 text-[#4361EE]', action: () => setActiveTab('add-product') },
+                    { label: t('dashboard_content.digital_product') || 'Produk Digital', icon: ShoppingBag, color: 'bg-indigo-50 text-[#7c2cff]', action: () => setActiveTab('add-product') },
                     { label: t('dashboard_content.blog_content') || 'Blog Konten', icon: FileText, color: 'bg-orange-50 text-orange-500' },
                     { label: t('dashboard_content.video_course') || 'Video Kursus', icon: PlayCircle, color: 'bg-purple-50 text-purple-500' },
                   ].map((btn, i) => (
@@ -759,9 +766,36 @@ export default function DashboardPage() {
                 {/* Premium Stats Summary Card */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
-                    { label: t('dashboard_content.total_revenue') || 'Total Pendapatan', value: `Rp ${stats.totalRevenue.toLocaleString()}`, icon: CreditCard, color: 'text-emerald-500', bg: 'bg-emerald-50/50', trend: '+12.5%', trendColor: 'text-emerald-500' },
-                    { label: t('dashboard_content.active_customers') || 'Pelanggan Aktif', value: stats.totalCustomers, icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-50/50', trend: '+4.2%', trendColor: 'text-indigo-500' },
-                    { label: t('dashboard_content.products_sold') || 'Produk Terjual', value: stats.totalOrders, icon: ShoppingBag, color: 'text-amber-500', bg: 'bg-amber-50/50', trend: '+8.1%', trendColor: 'text-amber-500' },
+                    { 
+                      label: t('dashboard_content.total_revenue') || 'Total Pendapatan', 
+                      value: `Rp ${stats.totalRevenue.toLocaleString()}`, 
+                      icon: CreditCard, 
+                      color: 'text-emerald-500', 
+                      bg: 'bg-emerald-50/50', 
+                      trend: `${(stats.revenueTrend || 0) >= 0 ? '+' : ''}${(stats.revenueTrend || 0).toFixed(1)}%`, 
+                      trendColor: (stats.revenueTrend || 0) >= 0 ? 'text-emerald-500' : 'text-red-500',
+                      trendBg: (stats.revenueTrend || 0) >= 0 ? 'bg-emerald-50' : 'bg-red-50'
+                    },
+                    { 
+                      label: t('dashboard_content.active_customers') || 'Pelanggan Aktif', 
+                      value: stats.totalCustomers, 
+                      icon: Users, 
+                      color: 'text-indigo-500', 
+                      bg: 'bg-indigo-50/50', 
+                      trend: `${(stats.customersTrend || 0) >= 0 ? '+' : ''}${(stats.customersTrend || 0).toFixed(1)}%`, 
+                      trendColor: (stats.customersTrend || 0) >= 0 ? 'text-indigo-500' : 'text-red-500',
+                      trendBg: (stats.customersTrend || 0) >= 0 ? 'bg-indigo-50' : 'bg-red-50'
+                    },
+                    { 
+                      label: t('dashboard_content.products_sold') || 'Produk Terjual', 
+                      value: stats.totalOrders, 
+                      icon: ShoppingBag, 
+                      color: 'text-amber-500', 
+                      bg: 'bg-amber-50/50', 
+                      trend: `${(stats.ordersTrend || 0) >= 0 ? '+' : ''}${(stats.ordersTrend || 0).toFixed(1)}%`, 
+                      trendColor: (stats.ordersTrend || 0) >= 0 ? 'text-amber-500' : 'text-red-500',
+                      trendBg: (stats.ordersTrend || 0) >= 0 ? 'bg-amber-50' : 'bg-red-50'
+                    },
                   ].map((s, i) => (
                     <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
                       <div className={`absolute top-0 right-0 w-32 h-32 ${s.bg} rounded-full -mr-16 -mt-16 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700`}></div>
@@ -769,8 +803,8 @@ export default function DashboardPage() {
                         <div className={`w-14 h-14 ${s.bg} ${s.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
                           <s.icon className="w-7 h-7" />
                         </div>
-                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${s.bg} ${s.trendColor} text-[10px] font-black tracking-widest`}>
-                          <TrendingUp className="w-3 h-3" /> {s.trend}
+                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${s.trendBg} ${s.trendColor} text-[10px] font-black tracking-widest`}>
+                          <TrendingUp className={`w-3 h-3 ${s.trendColor.includes('red') ? 'rotate-180' : ''}`} /> {s.trend}
                         </div>
                       </div>
                       <div className="relative">
@@ -795,13 +829,13 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-3 bg-slate-50 p-1.5 rounded-2xl">
                       <button 
                         onClick={() => setVisitorPeriod('weekly')}
-                        className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${visitorPeriod === 'weekly' ? 'bg-white text-[#4361EE] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${visitorPeriod === 'weekly' ? 'bg-white text-[#7c2cff] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                       >
                         {t('dashboard_content.weekly') || 'Mingguan'}
                       </button>
                       <button 
                         onClick={() => setVisitorPeriod('monthly')}
-                        className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${visitorPeriod === 'monthly' ? 'bg-white text-[#4361EE] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${visitorPeriod === 'monthly' ? 'bg-white text-[#7c2cff] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                       >
                         {t('dashboard_content.monthly') || 'Bulanan'}
                       </button>
@@ -819,7 +853,7 @@ export default function DashboardPage() {
                             className="w-full bg-slate-100 rounded-t-xl group-hover/bar:bg-indigo-50 transition-colors relative overflow-hidden"
                             style={{ height: `${heightPx}px` }}
                           >
-                            <div className="absolute bottom-0 w-full bg-[#4361EE] rounded-t-xl transition-all duration-500 ease-out" style={{ height: h > 0 ? '100%' : '0%' }} />
+                            <div className="absolute bottom-0 w-full bg-[#7c2cff] rounded-t-xl transition-all duration-500 ease-out" style={{ height: h > 0 ? '100%' : '0%' }} />
                           </div>
                           <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none">
                             {h}
@@ -855,7 +889,7 @@ export default function DashboardPage() {
                     >
                       {t('dashboard_content.copy') || 'Salin'}
                     </button>
-                    <button onClick={() => setActiveTab('settings')} className="px-4 py-2.5 bg-indigo-50 text-[#4361EE] rounded-xl text-[11px] font-black hover:bg-indigo-100 transition-all whitespace-nowrap">{t('dashboard_content.change_slug') || 'Ubah Slug'}</button>
+                    <button onClick={() => setActiveTab('settings')} className="px-4 py-2.5 bg-indigo-50 text-[#7c2cff] rounded-xl text-[11px] font-black hover:bg-indigo-100 transition-all whitespace-nowrap">{t('dashboard_content.change_slug') || 'Ubah Slug'}</button>
                   </div>
                 </div>
 
@@ -866,9 +900,9 @@ export default function DashboardPage() {
                     setIsProductModalOpen(true);
                     setCurrentStep(1);
                   }}
-                  className="w-full py-4 bg-[#4361EE] text-white rounded-2xl font-black shadow-xl shadow-indigo-100 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-sm"
+                  className="w-full py-4 bg-[#7c2cff] text-white rounded-2xl font-black shadow-xl shadow-indigo-100 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-sm"
                 >
-                  <Plus className="w-5 h-5" /> {t('dashboard_content.add_new_block') || '+ Tambah Blok Baru'}
+                  <Plus className="w-5 h-5" /> {t('dashboard_content.add_new_block') || 'Tambah Blok Baru'}
                 </button>
 
                 <div className="space-y-5">
@@ -885,7 +919,7 @@ export default function DashboardPage() {
                           placeholder={t('dashboard_content.search_product') || 'Cari nama produk...'}
                           value={productSearch}
                           onChange={(e) => { setProductSearch(e.target.value); setProductPage(1); }}
-                          className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 focus:border-[#4361EE] focus:ring-2 focus:ring-[#4361EE]/20 rounded-xl transition-all outline-none text-sm font-medium text-slate-700"
+                          className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 focus:border-[#7c2cff] focus:ring-2 focus:ring-[#7c2cff]/20 rounded-xl transition-all outline-none text-sm font-medium text-slate-700"
                         />
                       </div>
                       <div className="relative">
@@ -895,7 +929,7 @@ export default function DashboardPage() {
                         <select
                           value={productFilter}
                           onChange={(e) => { setProductFilter(e.target.value); setProductPage(1); }}
-                          className="bg-white border border-slate-200 focus:border-[#4361EE] focus:ring-2 focus:ring-[#4361EE]/20 rounded-xl pl-9 pr-8 py-2 outline-none font-bold text-sm text-slate-700 appearance-none transition-all cursor-pointer h-[38px]"
+                          className="bg-white border border-slate-200 focus:border-[#7c2cff] focus:ring-2 focus:ring-[#7c2cff]/20 rounded-xl pl-9 pr-8 py-2 outline-none font-bold text-sm text-slate-700 appearance-none transition-all cursor-pointer h-[38px]"
                         >
                           <option value="ALL">Semua Tipe</option>
                           <option value="DIGITAL_FILE">Digital File</option>
@@ -917,7 +951,7 @@ export default function DashboardPage() {
                           )}
                         </div>
                         <div>
-                          <h4 className="font-black text-slate-900 group-hover:text-[#4361EE] transition-colors">{p.title}</h4>
+                          <h4 className="font-black text-slate-900 group-hover:text-[#7c2cff] transition-colors">{p.title}</h4>
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
                             {p.type} •
                             {p.originalPrice && Number(p.originalPrice) > Number(p.price) && (
@@ -932,7 +966,7 @@ export default function DashboardPage() {
                           onClick={() => handleToggleProduct(p)}
                           className={`w-11 h-6 rounded-full relative flex items-center px-1 cursor-pointer transition-colors ${p.isActive ? 'bg-indigo-50' : 'bg-slate-200'}`}
                         >
-                          <div className={`w-4 h-4 rounded-full absolute shadow-sm transition-all ${p.isActive ? 'bg-[#4361EE] right-1' : 'bg-white left-1'}`}></div>
+                          <div className={`w-4 h-4 rounded-full absolute shadow-sm transition-all ${p.isActive ? 'bg-[#7c2cff] right-1' : 'bg-white left-1'}`}></div>
                         </div>
                         <button onClick={() => handleEditProductClick(p)} className="p-3 hover:bg-slate-50 rounded-xl text-slate-300 hover:text-slate-500 transition-all">
                           <MoreHorizontal className="w-6 h-6" />
@@ -970,7 +1004,7 @@ export default function DashboardPage() {
                             <button
                               key={i}
                               onClick={() => setProductPage(i + 1)}
-                              className={`w-8 h-8 rounded-xl font-bold text-xs transition-all ${productPage === i + 1 ? 'bg-[#4361EE] text-white shadow-md shadow-[#4361EE]/20' : 'text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200'}`}
+                              className={`w-8 h-8 rounded-xl font-bold text-xs transition-all ${productPage === i + 1 ? 'bg-[#7c2cff] text-white shadow-md shadow-[#7c2cff]/20' : 'text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200'}`}
                             >
                               {i + 1}
                             </button>
@@ -995,7 +1029,7 @@ export default function DashboardPage() {
               <div className="space-y-10 animate-in fade-in duration-500 max-w-4xl pb-20">
                 <div className="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-sm">
                   <div className="flex items-center gap-4 mb-10">
-                    <div className="w-12 h-12 bg-indigo-50 text-[#4361EE] rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-indigo-50 text-[#7c2cff] rounded-2xl flex items-center justify-center">
                       <Palette className="w-6 h-6" />
                     </div>
                     <div>
@@ -1009,11 +1043,11 @@ export default function DashboardPage() {
                     <div>
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-5 block">{t('dashboard_content.main_theme_color') || 'Warna Tema Utama'}</label>
                       <div className="flex flex-wrap gap-5">
-                        {['#4361EE', '#0EAD7B', '#F72585', '#7209B7', '#3A0CA3'].map(color => (
+                        {['#7c2cff', '#ff416c', '#F72585', '#7209B7', '#3A0CA3'].map(color => (
                           <button
                             key={color}
                             onClick={() => setStoreAppearance({ ...storeAppearance, primaryColor: color })}
-                            className={`w-12 h-12 rounded-full transition-all flex items-center justify-center ${color === storeAppearance.primaryColor ? 'ring-2 ring-offset-4 ring-[#4361EE] scale-105 shadow-md' : 'opacity-80 hover:opacity-100 hover:scale-105 hover:shadow-sm border border-black/5'}`}
+                            className={`w-12 h-12 rounded-full transition-all flex items-center justify-center ${color === storeAppearance.primaryColor ? 'ring-2 ring-offset-4 ring-[#7c2cff] scale-105 shadow-md' : 'opacity-80 hover:opacity-100 hover:scale-105 hover:shadow-sm border border-black/5'}`}
                             style={{ backgroundColor: color }}
                           >
                             {color === storeAppearance.primaryColor && <CheckCircle2 className="w-5 h-5 text-white drop-shadow-md" />}
@@ -1040,7 +1074,7 @@ export default function DashboardPage() {
                             <button
                               key={font.name}
                               onClick={() => setStoreAppearance({ ...storeAppearance, theme: font.name })}
-                              className={`py-2 px-4 rounded-xl text-xs whitespace-nowrap transition-all border ${font.name === storeAppearance.theme ? 'bg-indigo-50 border-[#4361EE] text-[#4361EE] shadow-sm font-bold' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 hover:border-slate-300 font-medium'}`}>
+                              className={`py-2 px-4 rounded-xl text-xs whitespace-nowrap transition-all border ${font.name === storeAppearance.theme ? 'bg-indigo-50 border-[#7c2cff] text-[#7c2cff] shadow-sm font-bold' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 hover:border-slate-300 font-medium'}`}>
                               <span style={{ fontFamily: font.css }}>{font.name}</span>
                             </button>
                           ))}
@@ -1058,7 +1092,7 @@ export default function DashboardPage() {
                             <button
                               key={l.id}
                               onClick={() => setStoreAppearance({ ...storeAppearance, customCss: l.id })}
-                              className={`w-14 h-14 shrink-0 rounded-xl transition-all flex items-center justify-center border-2 ${l.id === storeAppearance.customCss ? 'bg-indigo-50 border-[#4361EE] text-[#4361EE] shadow-sm scale-105' : 'bg-slate-50 border-transparent text-slate-400 hover:bg-slate-100 hover:text-slate-600'}`}>
+                              className={`w-14 h-14 shrink-0 rounded-xl transition-all flex items-center justify-center border-2 ${l.id === storeAppearance.customCss ? 'bg-indigo-50 border-[#7c2cff] text-[#7c2cff] shadow-sm scale-105' : 'bg-slate-50 border-transparent text-slate-400 hover:bg-slate-100 hover:text-slate-600'}`}>
                               <l.icon className="w-6 h-6" />
                             </button>
                           ))}
@@ -1073,24 +1107,24 @@ export default function DashboardPage() {
                         <div className="grid sm:grid-cols-2 gap-6">
                           <div>
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">{t('dashboard_content.profile_photo') || 'Foto Profil'}</label>
-                            <div className="relative group w-20 h-20 bg-slate-50 border-2 border-dashed border-slate-200 rounded-full flex items-center justify-center overflow-hidden hover:border-[#4361EE] transition-colors cursor-pointer">
+                            <div className="relative group w-20 h-20 bg-slate-50 border-2 border-dashed border-slate-200 rounded-full flex items-center justify-center overflow-hidden hover:border-[#7c2cff] transition-colors cursor-pointer">
                               <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'profileImageUrl')} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
                               {storeAppearance.profileImageUrl ? (
                                 <img src={storeAppearance.profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
                               ) : (
-                                <Upload className="w-5 h-5 text-slate-300 group-hover:text-[#4361EE]" />
+                                <Upload className="w-5 h-5 text-slate-300 group-hover:text-[#7c2cff]" />
                               )}
                             </div>
                           </div>
                           <div>
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">{t('dashboard_content.header_bg') || 'Gambar Header (Background)'}</label>
-                            <div className="relative group w-full h-20 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden hover:border-[#4361EE] transition-colors cursor-pointer">
+                            <div className="relative group w-full h-20 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden hover:border-[#7c2cff] transition-colors cursor-pointer">
                               <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'headerImageUrl')} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
                               {storeAppearance.headerImageUrl ? (
                                 <img src={storeAppearance.headerImageUrl} alt="Header" className="w-full h-full object-cover" />
                               ) : (
                                 <div className="text-center flex flex-col items-center">
-                                  <ImageIcon className="w-5 h-5 text-slate-300 group-hover:text-[#4361EE] mb-1" />
+                                  <ImageIcon className="w-5 h-5 text-slate-300 group-hover:text-[#7c2cff] mb-1" />
                                   <span className="text-[10px] text-slate-400 font-bold">Upload Header</span>
                                 </div>
                               )}
@@ -1105,7 +1139,7 @@ export default function DashboardPage() {
                           value={storeSettings.description}
                           onChange={(e) => setStoreSettings({ ...storeSettings, description: e.target.value })}
                           placeholder="Deskripsikan diri Anda atau toko Anda..."
-                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-700 focus:bg-white focus:border-[#4361EE] focus:ring-4 focus:ring-indigo-50 transition-all min-h-[100px]"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-700 focus:bg-white focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all min-h-[100px]"
                         ></textarea>
                       </div>
 
@@ -1135,14 +1169,14 @@ export default function DashboardPage() {
                         <div className="space-y-6">
                           <div>
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">{t('dashboard_content.promo_banner') || 'Banner Promosi (Gambar)'}</label>
-                            <div className="relative group w-full h-32 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center overflow-hidden hover:border-[#4361EE] transition-colors cursor-pointer">
+                            <div className="relative group w-full h-32 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center overflow-hidden hover:border-[#7c2cff] transition-colors cursor-pointer">
                               <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'bannerImageUrl')} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
                               {storeAppearance.bannerImageUrl ? (
                                 <img src={storeAppearance.bannerImageUrl} alt="Banner" className="w-full h-full object-cover" />
                               ) : (
                                 <>
-                                  <ImageIcon className="w-6 h-6 text-slate-300 group-hover:text-[#4361EE] mb-2" />
-                                  <span className="text-xs font-bold text-slate-400 group-hover:text-[#4361EE]">Upload Banner Promo</span>
+                                  <ImageIcon className="w-6 h-6 text-slate-300 group-hover:text-[#7c2cff] mb-2" />
+                                  <span className="text-xs font-bold text-slate-400 group-hover:text-[#7c2cff]">Upload Banner Promo</span>
                                 </>
                               )}
                             </div>
@@ -1155,7 +1189,7 @@ export default function DashboardPage() {
                                 placeholder={t('dashboard_content.cta_text_placeholder') || "Contoh: Gabung Komunitas"}
                                 value={storeAppearance.ctaText}
                                 onChange={(e) => setStoreAppearance({ ...storeAppearance, ctaText: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:bg-white focus:border-[#4361EE] focus:ring-4 focus:ring-indigo-50 transition-all"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:bg-white focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all"
                               />
                             </div>
                             <div>
@@ -1165,7 +1199,7 @@ export default function DashboardPage() {
                                 placeholder="https://"
                                 value={storeAppearance.ctaLink}
                                 onChange={(e) => setStoreAppearance({ ...storeAppearance, ctaLink: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:bg-white focus:border-[#4361EE] focus:ring-4 focus:ring-indigo-50 transition-all"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:bg-white focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all"
                               />
                             </div>
                           </div>
@@ -1179,7 +1213,7 @@ export default function DashboardPage() {
                             <button
                               key={color}
                               onClick={() => setStoreAppearance({ ...storeAppearance, contentBgColor: color })}
-                              className={`w-10 h-10 rounded-xl border transition-all ${color === storeAppearance.contentBgColor ? 'border-[#4361EE] scale-110 shadow-sm' : 'border-slate-200 hover:scale-105'}`}
+                              className={`w-10 h-10 rounded-xl border transition-all ${color === storeAppearance.contentBgColor ? 'border-[#7c2cff] scale-110 shadow-sm' : 'border-slate-200 hover:scale-105'}`}
                               style={{ backgroundColor: color }}
                             ></button>
                           ))}
@@ -1189,14 +1223,14 @@ export default function DashboardPage() {
 
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-100">
                       <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 bg-slate-50/80 px-4 py-2.5 rounded-xl border border-slate-100 w-full sm:w-auto">
-                        <AlertCircle className="w-4 h-4 text-[#4361EE] shrink-0" />
+                        <AlertCircle className="w-4 h-4 text-[#7c2cff] shrink-0" />
                         <span className="truncate">{t('dashboard_content.live_preview_note') || 'Perubahan langsung terlihat di Live Preview'}</span>
                       </div>
 
                       <button
                         onClick={handleUpdateAppearance}
                         disabled={isSubmitting}
-                        className="w-full sm:w-auto shrink-0 px-6 py-2.5 bg-[#4361EE] text-white rounded-xl font-bold whitespace-nowrap shadow-md hover:bg-indigo-600 active:scale-95 transition-all flex items-center justify-center gap-2.5 text-sm"
+                        className="w-full sm:w-auto shrink-0 px-6 py-2.5 bg-[#7c2cff] text-white rounded-xl font-bold whitespace-nowrap shadow-md hover:bg-indigo-600 active:scale-95 transition-all flex items-center justify-center gap-2.5 text-sm"
                       >
                         {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-5 h-5" /> {t('dashboard_content.save_appearance') || 'Simpan Tampilan'}</>}
                       </button>
@@ -1211,7 +1245,7 @@ export default function DashboardPage() {
                 <div className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-indigo-50 text-[#4361EE] rounded-2xl flex items-center justify-center">
+                      <div className="w-12 h-12 bg-indigo-50 text-[#7c2cff] rounded-2xl flex items-center justify-center">
                         <TrendingUp className="w-6 h-6" />
                       </div>
                       <div>
@@ -1226,13 +1260,13 @@ export default function DashboardPage() {
                     <div className="flex gap-2 p-1.5 bg-slate-100 rounded-xl">
                       <button 
                         onClick={() => setAnalyticsPeriod('30_days')}
-                        className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${analyticsPeriod === '30_days' ? 'bg-white text-[#4361EE] shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+                        className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${analyticsPeriod === '30_days' ? 'bg-white text-[#7c2cff] shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
                       >
                         {t('dashboard_content.thirty_days') || '30 Hari'}
                       </button>
                       <button 
                         onClick={() => setAnalyticsPeriod('90_days')}
-                        className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${analyticsPeriod === '90_days' ? 'bg-white text-[#4361EE] shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+                        className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${analyticsPeriod === '90_days' ? 'bg-white text-[#7c2cff] shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
                       >
                         {t('dashboard_content.ninety_days') || '90 Hari'}
                       </button>
@@ -1242,7 +1276,7 @@ export default function DashboardPage() {
                   <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     {[
                       { label: t('dashboard_content.total_views') || 'Total Views', value: funnelData.views.toString(), change: '', color: 'text-slate-900' },
-                      { label: t('dashboard_content.total_clicks') || 'Total Clicks', value: funnelData.clicks.toString(), change: '', color: 'text-[#4361EE]' },
+                      { label: t('dashboard_content.total_clicks') || 'Total Clicks', value: funnelData.clicks.toString(), change: '', color: 'text-[#7c2cff]' },
                       { label: 'CTR', value: funnelData.views > 0 ? ((funnelData.clicks / funnelData.views) * 100).toFixed(1) + '%' : '0.0%', change: '', color: 'text-emerald-500' },
                       { label: t('dashboard_content.conversion') || 'Konversi', value: funnelData.views > 0 ? ((funnelData.paid / funnelData.views) * 100).toFixed(1) + '%' : '0.0%', change: '', color: 'text-amber-500' },
                     ].map((s, i) => (
@@ -1272,7 +1306,7 @@ export default function DashboardPage() {
               <div className="space-y-8 animate-in fade-in duration-500 max-w-5xl">
                 <div className="flex justify-between items-center bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-50 text-[#4361EE] rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-indigo-50 text-[#7c2cff] rounded-2xl flex items-center justify-center">
                       <Users className="w-6 h-6" />
                     </div>
                     <div>
@@ -1282,7 +1316,7 @@ export default function DashboardPage() {
                   </div>
                   <button
                     onClick={exportCustomers}
-                    className="flex items-center gap-2 px-6 py-3 bg-[#4361EE] text-white rounded-xl font-black text-sm shadow-xl shadow-indigo-100 hover:scale-105 transition-all"
+                    className="flex items-center gap-2 px-6 py-3 bg-[#7c2cff] text-white rounded-xl font-black text-sm shadow-xl shadow-indigo-100 hover:scale-105 transition-all"
                   >
                     <ArrowDownToLine className="w-4 h-4" /> Export CSV
                   </button>
@@ -1305,7 +1339,7 @@ export default function DashboardPage() {
                           <tr key={c.id} className="hover:bg-slate-50/50 transition-colors">
                             <td className="px-8 py-5">
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-indigo-50 text-[#4361EE] rounded-xl flex items-center justify-center font-black text-sm">
+                                <div className="w-10 h-10 bg-indigo-50 text-[#7c2cff] rounded-xl flex items-center justify-center font-black text-sm">
                                   {c.name.charAt(0)}
                                 </div>
                                 <span className="font-bold text-slate-900">{c.name}</span>
@@ -1342,7 +1376,7 @@ export default function DashboardPage() {
               <div className="space-y-8 animate-in fade-in duration-500 max-w-5xl">
                 <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-50 text-[#4361EE] rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-indigo-50 text-[#7c2cff] rounded-2xl flex items-center justify-center">
                       <ShoppingBag className="w-6 h-6" />
                     </div>
                     <div>
@@ -1393,7 +1427,7 @@ export default function DashboardPage() {
               <div className="space-y-10 animate-in fade-in duration-500 max-w-4xl pb-20">
                 <div className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
                   <div className="flex items-center gap-4 mb-10">
-                    <div className="w-12 h-12 bg-indigo-50 text-[#4361EE] rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-indigo-50 text-[#7c2cff] rounded-2xl flex items-center justify-center">
                       <Settings className="w-6 h-6" />
                     </div>
                     <div>
@@ -1432,7 +1466,7 @@ export default function DashboardPage() {
                         <div className="space-y-3">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center justify-between">
                             Custom Domain (PRO)
-                            <span className="bg-indigo-50 text-[#4361EE] px-2 py-0.5 rounded text-[8px]">WHITE-LABEL</span>
+                            <span className="bg-indigo-50 text-[#7c2cff] px-2 py-0.5 rounded text-[8px]">WHITE-LABEL</span>
                           </label>
                           <div className="relative">
                             <Globe className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
@@ -1461,7 +1495,7 @@ export default function DashboardPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="px-10 py-4 bg-[#4361EE] text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-100 hover:scale-105 transition-all flex items-center gap-2"
+                        className="px-10 py-4 bg-[#7c2cff] text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-100 hover:scale-105 transition-all flex items-center gap-2"
                       >
                         {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-4 h-4" /> {t('dashboard_content.save_changes') || 'Simpan Perubahan'}</>}
                       </button>
@@ -1480,7 +1514,7 @@ export default function DashboardPage() {
                   {/* Modal Header */}
                   <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white z-10 shrink-0">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-indigo-50 text-[#4361EE] rounded-2xl flex items-center justify-center">
+                      <div className="w-12 h-12 bg-indigo-50 text-[#7c2cff] rounded-2xl flex items-center justify-center">
                         <ShoppingBag className="w-6 h-6" />
                       </div>
                       <div>
@@ -1488,7 +1522,7 @@ export default function DashboardPage() {
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{t('product_modal.setup') || 'Setup produk digital Anda'}</p>
                       </div>
                     </div>
-                    <button onClick={() => setIsProductModalOpen(false)} className="w-10 h-10 bg-slate-50 text-slate-400 hover:text-[#4361EE] hover:bg-indigo-50 rounded-full flex items-center justify-center transition-all">
+                    <button onClick={() => setIsProductModalOpen(false)} className="w-10 h-10 bg-slate-50 text-slate-400 hover:text-[#7c2cff] hover:bg-indigo-50 rounded-full flex items-center justify-center transition-all">
                       <X className="w-5 h-5" />
                     </button>
                   </div>
@@ -1498,7 +1532,7 @@ export default function DashboardPage() {
                     <div className="flex items-center">
                       {[1, 2, 3].map((step) => (
                         <div key={step} className="flex items-center">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 ${currentStep === step ? 'bg-[#4361EE] text-white shadow-md shadow-indigo-200' : currentStep > step ? 'bg-indigo-100 text-[#4361EE]' : 'bg-white text-slate-300 border-2 border-slate-100'}`}>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 ${currentStep === step ? 'bg-[#7c2cff] text-white shadow-md shadow-indigo-200' : currentStep > step ? 'bg-indigo-100 text-[#7c2cff]' : 'bg-white text-slate-300 border-2 border-slate-100'}`}>
                             {currentStep > step ? <Check className="w-4 h-4" /> : step}
                           </div>
                           {step < 3 && (
@@ -1508,7 +1542,7 @@ export default function DashboardPage() {
                       ))}
                     </div>
                     <div className="hidden sm:block">
-                      <span className="text-xs font-black text-[#4361EE] uppercase tracking-widest bg-indigo-50 px-4 py-2 rounded-xl">
+                      <span className="text-xs font-black text-[#7c2cff] uppercase tracking-widest bg-indigo-50 px-4 py-2 rounded-xl">
                         {t('product_modal.step') || 'Langkah'} {currentStep} {t('product_modal.of') || 'dari'} 3: {currentStep === 1 ? (t('product_modal.basic_info') || 'Info Dasar') : currentStep === 2 ? (t('product_modal.price_promo') || 'Harga & Promo') : (t('product_modal.done') || 'Selesai')}
                       </span>
                     </div>
@@ -1559,7 +1593,7 @@ export default function DashboardPage() {
                                         reader.readAsDataURL(file);
                                       }
                                     }} />
-                                    <label htmlFor="cover-upload" className="text-xs font-black text-[#4361EE] bg-indigo-50 px-4 py-2 rounded-xl cursor-pointer hover:bg-indigo-100 transition-colors">
+                                    <label htmlFor="cover-upload" className="text-xs font-black text-[#7c2cff] bg-indigo-50 px-4 py-2 rounded-xl cursor-pointer hover:bg-indigo-100 transition-colors">
                                       {t('product_modal.select_image') || 'Pilih Gambar'}
                                     </label>
                                     <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">{t('product_modal.max_5mb') || 'Maks 5MB'}</p>
@@ -1581,11 +1615,11 @@ export default function DashboardPage() {
                                   <div
                                     key={t.id}
                                     onClick={() => setNewProduct({ ...newProduct, type: t.id as any })}
-                                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all ${newProduct.type === t.id ? 'border-[#4361EE] bg-indigo-50/50 shadow-md shadow-indigo-100/50' : 'border-slate-100 bg-white hover:border-slate-200 shadow-sm'}`}
+                                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all ${newProduct.type === t.id ? 'border-[#7c2cff] bg-indigo-50/50 shadow-md shadow-indigo-100/50' : 'border-slate-100 bg-white hover:border-slate-200 shadow-sm'}`}
                                   >
                                     <div className="flex items-center gap-3 mb-2">
-                                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${newProduct.type === t.id ? 'border-[#4361EE]' : 'border-slate-300'}`}>
-                                        {newProduct.type === t.id && <div className="w-2 h-2 bg-[#4361EE] rounded-full"></div>}
+                                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${newProduct.type === t.id ? 'border-[#7c2cff]' : 'border-slate-300'}`}>
+                                        {newProduct.type === t.id && <div className="w-2 h-2 bg-[#7c2cff] rounded-full"></div>}
                                       </div>
                                       <span className="text-sm font-black text-slate-800">{t.label}</span>
                                     </div>
@@ -1601,19 +1635,19 @@ export default function DashboardPage() {
                             {newProduct.type === 'DIGITAL_FILE' && (
                               <div className="space-y-5">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 bg-indigo-50 text-[#4361EE] rounded-xl flex items-center justify-center"><Upload className="w-5 h-5" /></div>
+                                  <div className="w-10 h-10 bg-indigo-50 text-[#7c2cff] rounded-xl flex items-center justify-center"><Upload className="w-5 h-5" /></div>
                                   <div>
                                     <h4 className="text-sm font-black text-slate-800">{t('product_modal.upload_main') || 'Upload File Utama'}</h4>
                                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{t('product_modal.buyers_download') || 'Pembeli akan mendownload ini'}</p>
                                   </div>
                                 </div>
-                                <div onClick={() => fileInputRef.current?.click()} className="w-full py-10 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-[#4361EE] hover:bg-indigo-50/30 transition-all">
+                                <div onClick={() => fileInputRef.current?.click()} className="w-full py-10 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-[#7c2cff] hover:bg-indigo-50/30 transition-all">
                                   <input type="file" ref={fileInputRef} className="hidden" onChange={(e) => {
                                     if (e.target.files?.[0]) { setNewProduct({ ...newProduct, fileUrl: e.target.files[0].name, platform: 'upload' }); showNotification('File: ' + e.target.files[0].name); }
                                   }} />
                                   <Plus className="w-8 h-8 text-slate-300" />
                                   {newProduct.platform === 'upload' && newProduct.fileUrl ? (
-                                    <p className="text-xs font-black text-[#4361EE] bg-indigo-50 px-4 py-2 rounded-lg">{newProduct.fileUrl}</p>
+                                    <p className="text-xs font-black text-[#7c2cff] bg-indigo-50 px-4 py-2 rounded-lg">{newProduct.fileUrl}</p>
                                   ) : (
                                     <p className="text-sm font-bold text-slate-500">{t('product_modal.click_to_select') || 'Klik untuk Pilih File Maks 50MB'}</p>
                                   )}
@@ -1624,7 +1658,7 @@ export default function DashboardPage() {
                             {newProduct.type === 'LINK' && (
                               <div className="space-y-5">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 bg-indigo-50 text-[#4361EE] rounded-xl flex items-center justify-center"><Link2 className="w-5 h-5" /></div>
+                                  <div className="w-10 h-10 bg-indigo-50 text-[#7c2cff] rounded-xl flex items-center justify-center"><Link2 className="w-5 h-5" /></div>
                                   <div>
                                     <h4 className="text-sm font-black text-slate-800">{t('product_modal.secret_link') || 'Tautan Akses Rahasia'}</h4>
                                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{t('product_modal.buyers_download') || 'Pembeli akan mendownload ini'}</p>
@@ -1638,7 +1672,7 @@ export default function DashboardPage() {
                               <div className="space-y-6">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-indigo-50 text-[#4361EE] rounded-xl flex items-center justify-center"><Calendar className="w-5 h-5" /></div>
+                                    <div className="w-10 h-10 bg-indigo-50 text-[#7c2cff] rounded-xl flex items-center justify-center"><Calendar className="w-5 h-5" /></div>
                                     <div>
                                       <h4 className="text-sm font-black text-slate-800">{t('product_modal.session_schedule') || 'Jadwal Sesi & Kuota'}</h4>
                                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{t('product_modal.determine_availability') || 'Tentukan ketersediaan Anda'}</p>
@@ -1660,7 +1694,7 @@ export default function DashboardPage() {
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('product_modal.session_date') || 'Tanggal Sesi'}</label>
                                             <div className="relative">
                                               <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                              <input type="date" value={slot.startTime ? slot.startTime.split('T')[0] : ''} onChange={(e) => { const s = [...newProduct.bookingSlots]; const date = e.target.value; const startT = s[index].startTime && s[index].startTime.includes('T') ? s[index].startTime.split('T')[1] : '09:00'; const endT = s[index].endTime && s[index].endTime.includes('T') ? s[index].endTime.split('T')[1] : '10:00'; s[index].startTime = date ? `${date}T${startT}` : ''; s[index].endTime = date ? `${date}T${endT}` : ''; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-slate-700 focus:border-[#4361EE] focus:ring-4 focus:ring-indigo-50 transition-all" />
+                                              <input type="date" value={slot.startTime ? slot.startTime.split('T')[0] : ''} onChange={(e) => { const s = [...newProduct.bookingSlots]; const date = e.target.value; const startT = s[index].startTime && s[index].startTime.includes('T') ? s[index].startTime.split('T')[1] : '09:00'; const endT = s[index].endTime && s[index].endTime.includes('T') ? s[index].endTime.split('T')[1] : '10:00'; s[index].startTime = date ? `${date}T${startT}` : ''; s[index].endTime = date ? `${date}T${endT}` : ''; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-slate-700 focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all" />
                                             </div>
                                           </div>
                                           <div className="flex-1 w-full space-y-2">
@@ -1668,12 +1702,12 @@ export default function DashboardPage() {
                                             <div className="flex items-center gap-2">
                                               <div className="relative flex-1">
                                                 <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                                <input type="time" value={slot.startTime && slot.startTime.includes('T') ? slot.startTime.split('T')[1] : ''} onChange={(e) => { const s = [...newProduct.bookingSlots]; const date = s[index].startTime && s[index].startTime.includes('T') ? s[index].startTime.split('T')[0] : new Date().toISOString().split('T')[0]; s[index].startTime = `${date}T${e.target.value}`; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-9 pr-2 text-sm font-bold text-slate-700 focus:border-[#4361EE] focus:ring-4 focus:ring-indigo-50 transition-all" />
+                                                <input type="time" value={slot.startTime && slot.startTime.includes('T') ? slot.startTime.split('T')[1] : ''} onChange={(e) => { const s = [...newProduct.bookingSlots]; const date = s[index].startTime && s[index].startTime.includes('T') ? s[index].startTime.split('T')[0] : new Date().toISOString().split('T')[0]; s[index].startTime = `${date}T${e.target.value}`; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-9 pr-2 text-sm font-bold text-slate-700 focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all" />
                                               </div>
                                               <span className="text-slate-300 font-bold">-</span>
                                               <div className="relative flex-1">
                                                 <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                                <input type="time" value={slot.endTime && slot.endTime.includes('T') ? slot.endTime.split('T')[1] : ''} onChange={(e) => { const s = [...newProduct.bookingSlots]; const date = s[index].endTime && s[index].endTime.includes('T') ? s[index].endTime.split('T')[0] : (s[index].startTime && s[index].startTime.includes('T') ? s[index].startTime.split('T')[0] : new Date().toISOString().split('T')[0]); s[index].endTime = `${date}T${e.target.value}`; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-9 pr-2 text-sm font-bold text-slate-700 focus:border-[#4361EE] focus:ring-4 focus:ring-indigo-50 transition-all" />
+                                                <input type="time" value={slot.endTime && slot.endTime.includes('T') ? slot.endTime.split('T')[1] : ''} onChange={(e) => { const s = [...newProduct.bookingSlots]; const date = s[index].endTime && s[index].endTime.includes('T') ? s[index].endTime.split('T')[0] : (s[index].startTime && s[index].startTime.includes('T') ? s[index].startTime.split('T')[0] : new Date().toISOString().split('T')[0]); s[index].endTime = `${date}T${e.target.value}`; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-9 pr-2 text-sm font-bold text-slate-700 focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all" />
                                               </div>
                                             </div>
                                           </div>
@@ -1683,14 +1717,14 @@ export default function DashboardPage() {
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('product_modal.participant_quota') || 'Kuota Peserta'}</label>
                                             <div className="relative">
                                               <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                              <input type="number" min="1" value={slot.maxParticipants} onChange={(e) => { const s = [...newProduct.bookingSlots]; s[index].maxParticipants = e.target.value; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-slate-700 focus:border-[#4361EE] focus:ring-4 focus:ring-indigo-50 transition-all" />
+                                              <input type="number" min="1" value={slot.maxParticipants} onChange={(e) => { const s = [...newProduct.bookingSlots]; s[index].maxParticipants = e.target.value; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-slate-700 focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all" />
                                             </div>
                                           </div>
                                           <div className="flex-1 w-full space-y-2">
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('product_modal.meeting_link') || 'Link Meeting (Opsional)'}</label>
                                             <div className="relative">
                                               <Link2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                              <input type="url" placeholder="https://zoom.us/j/..." value={slot.meetingLink} onChange={(e) => { const s = [...newProduct.bookingSlots]; s[index].meetingLink = e.target.value; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-slate-700 focus:border-[#4361EE] focus:ring-4 focus:ring-indigo-50 transition-all" />
+                                              <input type="url" placeholder="https://zoom.us/j/..." value={slot.meetingLink} onChange={(e) => { const s = [...newProduct.bookingSlots]; s[index].meetingLink = e.target.value; setNewProduct({ ...newProduct, bookingSlots: s }); }} className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-slate-700 focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all" />
                                             </div>
                                           </div>
                                         </div>
@@ -1743,7 +1777,7 @@ export default function DashboardPage() {
                             <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] px-2">Marketing Enhancements</p>
 
                             {/* PWYW */}
-                            <div className={`p-6 rounded-3xl border-2 transition-all ${newProduct.isPwyw ? 'border-[#4361EE] bg-indigo-50/30' : 'border-slate-100 bg-white hover:border-indigo-100/50'}`}>
+                            <div className={`p-6 rounded-3xl border-2 transition-all ${newProduct.isPwyw ? 'border-[#7c2cff] bg-indigo-50/30' : 'border-slate-100 bg-white hover:border-indigo-100/50'}`}>
                               <div className="flex items-center justify-between">
                                 <div>
                                   <p className="text-base font-black text-slate-800 tracking-tight">Pay What You Want (PWYW)</p>
@@ -1751,7 +1785,7 @@ export default function DashboardPage() {
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                   <input type="checkbox" className="sr-only peer" checked={newProduct.isPwyw} onChange={(e) => setNewProduct({ ...newProduct, isPwyw: e.target.checked })} />
-                                  <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#4361EE]"></div>
+                                  <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#7c2cff]"></div>
                                 </label>
                               </div>
                               {newProduct.isPwyw && (
@@ -1760,7 +1794,7 @@ export default function DashboardPage() {
                                     <label className="text-[10px] font-black text-indigo-500 uppercase tracking-widest ml-1">{t('product_modal.min_price') || 'Batas Harga Minimum (IDR)'}</label>
                                     <div className="relative">
                                       <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-400 text-sm">Rp</span>
-                                      <input type="number" required={newProduct.isPwyw} value={newProduct.minPwywPrice} onChange={(e) => setNewProduct({ ...newProduct, minPwywPrice: e.target.value })} className="w-full bg-white border border-indigo-100 rounded-xl py-3 pl-12 pr-4 text-slate-900 font-bold text-sm focus:ring-2 focus:ring-[#4361EE]" />
+                                      <input type="number" required={newProduct.isPwyw} value={newProduct.minPwywPrice} onChange={(e) => setNewProduct({ ...newProduct, minPwywPrice: e.target.value })} className="w-full bg-white border border-indigo-100 rounded-xl py-3 pl-12 pr-4 text-slate-900 font-bold text-sm focus:ring-2 focus:ring-[#7c2cff]" />
                                     </div>
                                   </div>
                                   <div className="flex-1 text-[10px] font-bold text-indigo-400 bg-indigo-50 p-3 rounded-xl">
@@ -1807,12 +1841,12 @@ export default function DashboardPage() {
                       {currentStep === 3 && (
                         <div className="animate-in fade-in zoom-in-95 duration-500 max-w-2xl mx-auto text-center py-10 space-y-8">
                           <div className="w-24 h-24 bg-indigo-50 rounded-[2rem] rotate-3 flex items-center justify-center mx-auto shadow-xl shadow-indigo-200/50">
-                            <Send className="w-12 h-12 text-[#4361EE] -rotate-3" />
+                            <Send className="w-12 h-12 text-[#7c2cff] -rotate-3" />
                           </div>
                           <div>
                             <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{t('product_modal.ready_publish') || 'Siap Diterbitkan!'}</h3>
                             <p className="text-sm font-bold text-slate-500 mt-3 max-w-md mx-auto">
-                              {t('product_modal.ready_desc_1') || 'Produk'} <span className="text-[#4361EE] font-black">{newProduct.title || t('product_modal.untitled') || 'Tanpa Judul'}</span> {t('product_modal.ready_desc_2') || 'Anda sudah siap. Anda bisa mereview ulang atau langsung menyimpannya.'}
+                              {t('product_modal.ready_desc_1') || 'Produk'} <span className="text-[#7c2cff] font-black">{newProduct.title || t('product_modal.untitled') || 'Tanpa Judul'}</span> {t('product_modal.ready_desc_2') || 'Anda sudah siap. Anda bisa mereview ulang atau langsung menyimpannya.'}
                             </p>
                           </div>
 
@@ -1869,7 +1903,7 @@ export default function DashboardPage() {
                           document.getElementById('modal-body-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
                         }
                       }}
-                      className="px-8 py-3.5 bg-[#4361EE] text-white rounded-xl font-black shadow-lg shadow-indigo-100 hover:scale-105 active:scale-95 transition-all text-sm flex items-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
+                      className="px-8 py-3.5 bg-[#7c2cff] text-white rounded-xl font-black shadow-lg shadow-indigo-100 hover:scale-105 active:scale-95 transition-all text-sm flex items-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
                     >
                       {isSubmitting ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -1887,7 +1921,7 @@ export default function DashboardPage() {
             {activeTab === 'earnings' && (
               <div className="space-y-10 animate-in fade-in duration-500 max-w-5xl">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 bg-indigo-50 text-[#4361EE] rounded-2xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-indigo-50 text-[#7c2cff] rounded-2xl flex items-center justify-center">
                     <Wallet className="w-6 h-6" />
                   </div>
                   <div>
@@ -1899,7 +1933,7 @@ export default function DashboardPage() {
                 <div className="grid lg:grid-cols-3 gap-8">
                   <div className="lg:col-span-2 space-y-8">
                     {/* My Earnings Card (New Design) */}
-                    <div className="bg-linear-to-br from-[#4361EE] via-[#5A75F6] to-[#3a56d4] rounded-3xl p-6 shadow-xl shadow-indigo-500/20 relative overflow-hidden group border border-white/10">
+                    <div className="bg-linear-to-br from-[#7c2cff] via-[#5A75F6] to-[#3a56d4] rounded-3xl p-6 shadow-xl shadow-indigo-500/20 relative overflow-hidden group border border-white/10">
                       {/* Fluid Background Shapes */}
                       <div className="absolute top-[-30%] left-[-10%] w-[60%] h-[150%] bg-white/10 rounded-[100%] -rotate-12 blur-3xl pointer-events-none mix-blend-overlay"></div>
                       <div className="absolute bottom-[-30%] right-[-10%] w-[70%] h-[130%] bg-indigo-300/30 rounded-[100%] rotate-12 blur-3xl pointer-events-none mix-blend-overlay"></div>
@@ -1962,7 +1996,7 @@ export default function DashboardPage() {
                     <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
                       <div className="flex items-center justify-between mb-6">
                         <h4 className="font-black text-slate-900 text-lg">{t('dashboard_content.payout_history') || 'Riwayat Pencairan'}</h4>
-                        <button className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[#4361EE] flex items-center gap-1">
+                        <button className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[#7c2cff] flex items-center gap-1">
                           {t('dashboard_content.all') || 'Semua'} <ChevronRight className="w-4 h-4" />
                         </button>
                       </div>
@@ -2005,7 +2039,7 @@ export default function DashboardPage() {
                         <h4 className="font-black text-slate-900 text-lg">{t('dashboard_content.withdraw_to') || 'Cairkan Ke'}</h4>
                         <button
                           onClick={() => setIsBankModalOpen(true)}
-                          className="w-10 h-10 bg-indigo-50 text-[#4361EE] hover:bg-[#4361EE] hover:text-white transition-all rounded-xl flex items-center justify-center"
+                          className="w-10 h-10 bg-indigo-50 text-[#7c2cff] hover:bg-[#7c2cff] hover:text-white transition-all rounded-xl flex items-center justify-center"
                         >
                           <Settings className="w-5 h-5" />
                         </button>
@@ -2034,16 +2068,16 @@ export default function DashboardPage() {
                           </div>
                           <h5 className="font-black text-slate-700 mb-1">{t('dashboard_content.no_account_yet') || 'Belum Ada Rekening'}</h5>
                           <p className="text-[10px] text-slate-500 font-bold mb-4">{t('dashboard_content.add_account_desc') || 'Tambahkan rekening untuk mulai menarik dana pendapatanmu.'}</p>
-                          <span className="text-xs font-black text-[#4361EE] bg-indigo-50 px-4 py-2 rounded-xl">{t('dashboard_content.add_account') || 'Tambah Rekening'}</span>
+                          <span className="text-xs font-black text-[#7c2cff] bg-indigo-50 px-4 py-2 rounded-xl">{t('dashboard_content.add_account') || 'Tambah Rekening'}</span>
                         </div>
                       )}
                     </div>
 
                     <div className="bg-indigo-50/50 rounded-3xl p-6 border border-indigo-100/50 text-center">
-                      <div className="w-10 h-10 bg-[#4361EE] text-white rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <div className="w-10 h-10 bg-[#7c2cff] text-white rounded-xl flex items-center justify-center mx-auto mb-3">
                         <AlertCircle className="w-6 h-6" />
                       </div>
-                      <h5 className="font-black text-[#4361EE] mb-2 text-sm">{t('dashboard_content.withdrawal_info') || 'Informasi Penarikan'}</h5>
+                      <h5 className="font-black text-[#7c2cff] mb-2 text-sm">{t('dashboard_content.withdrawal_info') || 'Informasi Penarikan'}</h5>
                       <p className="text-[11px] font-medium text-slate-600 leading-relaxed">
                         {t('dashboard_content.transfer_fee_info') || 'Biaya transfer flat Rp 3.500 per penarikan. Sistem Instant Payout akan langsung memproses dana ke rekening Anda dalam hitungan detik.'}
                       </p>
@@ -2060,8 +2094,8 @@ export default function DashboardPage() {
             <div className="w-full lg:w-[480px] bg-white border-l border-slate-100 p-10 hidden lg:flex flex-col sticky top-20 h-[calc(100vh-80px)] overflow-y-auto animate-in slide-in-from-right-10 duration-500">
               <div className="flex items-center justify-between mb-12">
                 <h3 className="font-black text-slate-800 tracking-tight">{t('dashboard_content.live_preview') || 'Tampilan Live'}</h3>
-                <div className="flex items-center gap-2.5 text-[10px] font-black text-[#4361EE] uppercase tracking-[0.2em] bg-indigo-50 px-4 py-1.5 rounded-full">
-                  <div className="w-2 h-2 bg-[#4361EE] rounded-full animate-pulse"></div> Live Preview
+                <div className="flex items-center gap-2.5 text-[10px] font-black text-[#7c2cff] uppercase tracking-[0.2em] bg-indigo-50 px-4 py-1.5 rounded-full">
+                  <div className="w-2 h-2 bg-[#7c2cff] rounded-full animate-pulse"></div> Live Preview
                 </div>
               </div>
 
@@ -2116,7 +2150,7 @@ export default function DashboardPage() {
                     {(storeAppearance.socialLinks?.instagram || storeAppearance.socialLinks?.tiktok || storeAppearance.socialLinks?.youtube || storeAppearance.socialLinks?.x) && (
                       <div className="flex items-center gap-3 mt-4">
                         {['instagram', 'tiktok', 'youtube', 'x'].map(p => storeAppearance.socialLinks[p] ? (
-                          <a key={p} href={storeAppearance.socialLinks[p]} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center text-slate-700 hover:text-[#4361EE] hover:border-[#4361EE] transition-all">
+                          <a key={p} href={storeAppearance.socialLinks[p]} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center text-slate-700 hover:text-[#7c2cff] hover:border-[#7c2cff] transition-all">
                             {p === 'instagram' && <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>}
                             {p === 'tiktok' && <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>}
                             {p === 'youtube' && <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>}
@@ -2213,7 +2247,7 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="pt-8 pb-4 text-center opacity-50">
-                      <span className="text-[8px] font-black text-slate-800 uppercase tracking-widest">Powered by Sellora</span>
+                      <span className="text-[8px] font-black text-slate-800 uppercase tracking-widest">Powered by KAMU</span>
                     </div>
                   </div>
                 </div>
@@ -2270,7 +2304,7 @@ export default function DashboardPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#4361EE] text-white py-4 rounded-2xl font-black shadow-xl shadow-indigo-100 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center mt-4"
+                  className="w-full bg-[#7c2cff] text-white py-4 rounded-2xl font-black shadow-xl shadow-indigo-100 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center mt-4"
                 >
                   {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (t('dashboard_content.save_account') || 'Simpan Rekening')}
                 </button>
