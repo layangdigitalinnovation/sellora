@@ -164,7 +164,7 @@ export default function OrderSuccessPage() {
                  ) : order.product?.mimeType?.includes('pdf') ? (
                    <SecurePDFViewer src={`http://localhost:3001/api/payments/order/${orderId}/download-pdf`} />
                  ) : (
-                   <a href={`http://localhost:3001/api/payments/order/${orderId}/download-pdf`} target="_blank" rel="noreferrer" className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-white" style={{ backgroundColor: primaryColor }}>
+                   <a href={`http://localhost:3001/api/payments/order/${orderId}/download-file`} target="_blank" rel="noreferrer" className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-white" style={{ backgroundColor: primaryColor }}>
                      Unduh File <ExternalLink className="w-4 h-4" />
                    </a>
                  )}

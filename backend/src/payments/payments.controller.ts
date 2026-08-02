@@ -39,6 +39,17 @@ export class PaymentsController {
     return { url };
   }
 
+  @Get('order/:id/download-file')
+  async downloadFile(@Param('id') id: string, @Res() res: Response) {
+    const order = await this.paymentsService.getOrder(id);
+    if (order.status !== 'PAID') throw new BadRequestException('Order is not paid');
+    if (!order.product.fileUrl) throw new BadRequestException('Product has no file');
+
+    const key = order.product.fileUrl; 
+    const url = await this.storageService.getVideoSignedUrl(key, 900);
+    return res.redirect(url);
+  }
+
   @Get('order/:id/download-pdf')
   async downloadPdf(@Param('id') id: string, @Res() res: Response) {
     const order = await this.paymentsService.getOrder(id);
