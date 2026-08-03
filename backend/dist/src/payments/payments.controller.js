@@ -44,6 +44,16 @@ let PaymentsController = class PaymentsController {
         const url = await this.storageService.getVideoSignedUrl(key, 900);
         return { url };
     }
+    async downloadFile(id, res) {
+        const order = await this.paymentsService.getOrder(id);
+        if (order.status !== 'PAID')
+            throw new common_1.BadRequestException('Order is not paid');
+        if (!order.product.fileUrl)
+            throw new common_1.BadRequestException('Product has no file');
+        const key = order.product.fileUrl;
+        const url = await this.storageService.getVideoSignedUrl(key, 900);
+        return res.redirect(url);
+    }
     async downloadPdf(id, res) {
         const order = await this.paymentsService.getOrder(id);
         if (order.status !== 'PAID')
@@ -91,6 +101,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PaymentsController.prototype, "getVideoUrl", null);
+__decorate([
+    (0, common_1.Get)('order/:id/download-file'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PaymentsController.prototype, "downloadFile", null);
 __decorate([
     (0, common_1.Get)('order/:id/download-pdf'),
     __param(0, (0, common_1.Param)('id')),

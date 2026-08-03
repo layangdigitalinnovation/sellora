@@ -81,5 +81,6 @@ export declare class PaymentsController {
     getVideoUrl(id: string): Promise<{
         url: string;
     }>;
+    downloadFile(id: string, res: Response): Promise<void>;
     downloadPdf(id: string, res: Response): Promise<void>;
 }
