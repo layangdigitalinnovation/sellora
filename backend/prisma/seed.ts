@@ -9,13 +9,13 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const adminEmail = 'admin@sellora.com';
+  const adminEmail = 'admin@kamu.dijaminsuka.com';
   const existingAdmin = await prisma.user.findUnique({
     where: { email: adminEmail },
   });
 
   if (!existingAdmin) {
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash('$DijaminSuka2026', 10);
     const adminUser = await prisma.user.create({
       data: {
         email: adminEmail,

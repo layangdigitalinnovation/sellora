@@ -11,6 +11,7 @@ export declare class StoresController {
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -27,13 +28,13 @@ export declare class StoresController {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     }>;
     getMine(req: any): Promise<{
         id: string;
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -50,13 +51,13 @@ export declare class StoresController {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     } | null>;
     updateMine(req: any, body: Prisma.StoreUpdateInput): Promise<{
         id: string;
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -73,8 +74,50 @@ export declare class StoresController {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     }>;
+    getMyOrders(req: any): Promise<({
+        product: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            description: string | null;
+            isActive: boolean;
+            storeId: string;
+            type: import("@prisma/client").$Enums.ProductType;
+            title: string;
+            price: number;
+            originalPrice: number | null;
+            imageUrl: string | null;
+            fileUrl: string | null;
+            fileSize: number | null;
+            mimeType: string | null;
+            isPwyw: boolean;
+            minPwywPrice: number | null;
+            flashSaleEndDate: Date | null;
+            flashSaleMaxQuota: number | null;
+            totalSales: number;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        storeId: string;
+        productId: string;
+        bookingSlotId: string | null;
+        buyerEmail: string;
+        buyerName: string;
+        buyerPhone: string | null;
+        buyerAddress: string | null;
+        amount: number;
+        status: import("@prisma/client").$Enums.OrderStatus;
+        paymentGateway: string | null;
+        paymentMethod: string | null;
+        paymentRef: string | null;
+        externalId: string | null;
+        paidAt: Date | null;
+        downloadUrl: string | null;
+        downloadExpiry: Date | null;
+    })[]>;
     getBySlug(slug: string): Promise<{
         products: {
             id: string;
@@ -82,9 +125,9 @@ export declare class StoresController {
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
-            title: string;
             storeId: string;
             type: import("@prisma/client").$Enums.ProductType;
+            title: string;
             price: number;
             originalPrice: number | null;
             imageUrl: string | null;
@@ -102,6 +145,7 @@ export declare class StoresController {
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -118,6 +162,5 @@ export declare class StoresController {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     }>;
 }

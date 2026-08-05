@@ -1,10 +1,12 @@
 import { PaymentsService } from './payments.service';
 import { StorageService } from '../storage/storage.service';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import type { Response } from 'express';
 export declare class PaymentsController {
     private readonly paymentsService;
     private readonly storageService;
-    constructor(paymentsService: PaymentsService, storageService: StorageService);
+    private readonly subscriptionsService;
+    constructor(paymentsService: PaymentsService, storageService: StorageService, subscriptionsService: SubscriptionsService);
     checkout(body: any): Promise<{
         checkoutUrl: any;
         orderId: string;
@@ -18,6 +20,7 @@ export declare class PaymentsController {
             name: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             slug: string;
             customDomain: string | null;
             description: string | null;
@@ -34,7 +37,6 @@ export declare class PaymentsController {
             ctaLink: string | null;
             isVerified: boolean;
             isActive: boolean;
-            userId: string;
         };
         product: {
             id: string;
@@ -42,9 +44,9 @@ export declare class PaymentsController {
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
-            title: string;
             storeId: string;
             type: import("@prisma/client").$Enums.ProductType;
+            title: string;
             price: number;
             originalPrice: number | null;
             imageUrl: string | null;
@@ -61,9 +63,6 @@ export declare class PaymentsController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        amount: number;
-        status: import("@prisma/client").$Enums.OrderStatus;
-        paymentRef: string | null;
         storeId: string;
         productId: string;
         bookingSlotId: string | null;
@@ -71,8 +70,11 @@ export declare class PaymentsController {
         buyerName: string;
         buyerPhone: string | null;
         buyerAddress: string | null;
+        amount: number;
+        status: import("@prisma/client").$Enums.OrderStatus;
         paymentGateway: string | null;
         paymentMethod: string | null;
+        paymentRef: string | null;
         externalId: string | null;
         paidAt: Date | null;
         downloadUrl: string | null;

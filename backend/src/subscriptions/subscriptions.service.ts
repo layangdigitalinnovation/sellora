@@ -125,6 +125,48 @@ export class SubscriptionsService {
             endDate.setMonth(endDate.getMonth() + 1);
           }
 
+          const user = await this.prisma.user.findUnique({ where: { id: sub.userId } });
+
+          // Handle Referral Commission (One-Time)
+          let commissionOps: any[] = [];
+          if (user && user.referredById) {
+            const existingCommission = await this.prisma.referralCommission.findFirst({
+              where: { refereeId: user.id }
+            });
+            if (!existingCommission) {
+              const typeSetting = await this.prisma.systemSetting.findUnique({ where: { key: 'AFFILIATE_COMMISSION_TYPE' } });
+              const valSetting = await this.prisma.systemSetting.findUnique({ where: { key: 'AFFILIATE_COMMISSION_VALUE' } });
+              
+              const commType = typeSetting?.value || 'PERCENTAGE';
+              const commValue = valSetting?.value ? parseFloat(valSetting.value) : 20;
+              
+              let commissionAmount = 0;
+              if (commType === 'FIXED') {
+                commissionAmount = commValue;
+              } else {
+                commissionAmount = sub.package.price * (commValue / 100);
+              }
+
+              commissionOps.push(
+                this.prisma.referralCommission.create({
+                  data: {
+                    referrerId: user.referredById,
+                    refereeId: user.id,
+                    subscriptionId: sub.id,
+                    amount: commissionAmount,
+                    status: 'PAID'
+                  }
+                })
+              );
+              commissionOps.push(
+                this.prisma.user.update({
+                  where: { id: user.referredById },
+                  data: { balance: { increment: commissionAmount } }
+                })
+              );
+            }
+          }
+
           await this.prisma.$transaction([
             this.prisma.userSubscription.update({
               where: { id: subId },
@@ -137,12 +179,10 @@ export class SubscriptionsService {
             this.prisma.user.update({
               where: { id: sub.userId },
               data: {
-                // Determine Plan based on package name, or we can just leave plan enum for now and rely on package.
-                // We map known plans. If they created custom, we can just set it to ENTERPRISE or custom logic.
-                // For safety, we keep plan enum or ignore it. Let's try to map:
                 plan: (sub.package.name.toUpperCase() as any) || 'PRO'
               }
-            })
+            }),
+            ...commissionOps
           ]);
         }
       }

@@ -25,6 +25,12 @@ export class StoresController {
     return this.storesService.update(req.user.userId, body);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me/orders')
+  getMyOrders(@Request() req: any) {
+    return this.storesService.getOrdersByUserId(req.user.userId);
+  }
+
   @Get(':slug')
   getBySlug(@Param('slug') slug: string) {
     return this.storesService.findBySlug(slug);

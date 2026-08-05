@@ -27,6 +27,7 @@ export declare class PaymentsService {
             name: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             slug: string;
             customDomain: string | null;
             description: string | null;
@@ -43,7 +44,6 @@ export declare class PaymentsService {
             ctaLink: string | null;
             isVerified: boolean;
             isActive: boolean;
-            userId: string;
         };
         product: {
             id: string;
@@ -51,9 +51,9 @@ export declare class PaymentsService {
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
-            title: string;
             storeId: string;
             type: import("@prisma/client").$Enums.ProductType;
+            title: string;
             price: number;
             originalPrice: number | null;
             imageUrl: string | null;
@@ -70,9 +70,6 @@ export declare class PaymentsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        amount: number;
-        status: import("@prisma/client").$Enums.OrderStatus;
-        paymentRef: string | null;
         storeId: string;
         productId: string;
         bookingSlotId: string | null;
@@ -80,8 +77,11 @@ export declare class PaymentsService {
         buyerName: string;
         buyerPhone: string | null;
         buyerAddress: string | null;
+        amount: number;
+        status: import("@prisma/client").$Enums.OrderStatus;
         paymentGateway: string | null;
         paymentMethod: string | null;
+        paymentRef: string | null;
         externalId: string | null;
         paidAt: Date | null;
         downloadUrl: string | null;

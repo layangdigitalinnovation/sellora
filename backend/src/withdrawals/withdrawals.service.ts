@@ -36,6 +36,10 @@ export class WithdrawalsService {
   }
 
   async requestWithdrawal(userId: string, amount: number) {
+    if (amount < 50000) {
+      throw new BadRequestException('Minimum withdrawal amount is Rp 50.000');
+    }
+
     if (amount <= this.FEE) {
       throw new BadRequestException(`Amount must be greater than the fee of Rp ${this.FEE}`);
     }

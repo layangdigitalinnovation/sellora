@@ -123,6 +123,39 @@ let SubscriptionsService = class SubscriptionsService {
                     else {
                         endDate.setMonth(endDate.getMonth() + 1);
                     }
+                    const user = await this.prisma.user.findUnique({ where: { id: sub.userId } });
+                    let commissionOps = [];
+                    if (user && user.referredById) {
+                        const existingCommission = await this.prisma.referralCommission.findFirst({
+                            where: { refereeId: user.id }
+                        });
+                        if (!existingCommission) {
+                            const typeSetting = await this.prisma.systemSetting.findUnique({ where: { key: 'AFFILIATE_COMMISSION_TYPE' } });
+                            const valSetting = await this.prisma.systemSetting.findUnique({ where: { key: 'AFFILIATE_COMMISSION_VALUE' } });
+                            const commType = typeSetting?.value || 'PERCENTAGE';
+                            const commValue = valSetting?.value ? parseFloat(valSetting.value) : 20;
+                            let commissionAmount = 0;
+                            if (commType === 'FIXED') {
+                                commissionAmount = commValue;
+                            }
+                            else {
+                                commissionAmount = sub.package.price * (commValue / 100);
+                            }
+                            commissionOps.push(this.prisma.referralCommission.create({
+                                data: {
+                                    referrerId: user.referredById,
+                                    refereeId: user.id,
+                                    subscriptionId: sub.id,
+                                    amount: commissionAmount,
+                                    status: 'PAID'
+                                }
+                            }));
+                            commissionOps.push(this.prisma.user.update({
+                                where: { id: user.referredById },
+                                data: { balance: { increment: commissionAmount } }
+                            }));
+                        }
+                    }
                     await this.prisma.$transaction([
                         this.prisma.userSubscription.update({
                             where: { id: subId },
@@ -137,7 +170,8 @@ let SubscriptionsService = class SubscriptionsService {
                             data: {
                                 plan: sub.package.name.toUpperCase() || 'PRO'
                             }
-                        })
+                        }),
+                        ...commissionOps
                     ]);
                 }
             }

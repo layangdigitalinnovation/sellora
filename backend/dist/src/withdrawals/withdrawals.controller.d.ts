@@ -11,9 +11,9 @@ export declare class WithdrawalsController {
         updatedAt: Date;
         userId: string;
         amount: number;
+        status: import("@prisma/client").$Enums.WithdrawalStatus;
         fee: number;
         netAmount: number;
-        status: import("@prisma/client").$Enums.WithdrawalStatus;
         processedAt: Date | null;
     }[]>;
     requestWithdrawal(req: any, body: {
@@ -27,9 +27,9 @@ export declare class WithdrawalsController {
         updatedAt: Date;
         userId: string;
         amount: number;
+        status: import("@prisma/client").$Enums.WithdrawalStatus;
         fee: number;
         netAmount: number;
-        status: import("@prisma/client").$Enums.WithdrawalStatus;
         processedAt: Date | null;
     }>;
     updateBankDetails(req: any, body: {

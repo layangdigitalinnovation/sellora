@@ -27,7 +27,8 @@ function SubscriptionContent() {
 
     const fetchData = async () => {
       try {
-        const profileRes = await fetch('http://127.0.0.1:3001/api/auth/me', {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+        const profileRes = await fetch(`${apiUrl}/auth/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!profileRes.ok) throw new Error('Unauthorized');
@@ -36,8 +37,8 @@ function SubscriptionContent() {
         setUser(profileData);
 
         const [pkgRes, subRes] = await Promise.all([
-          fetch('http://localhost:3001/api/subscriptions/packages'),
-          fetch(`http://localhost:3001/api/subscriptions/user/${currentUserId}`)
+          fetch(`${apiUrl}/subscriptions/packages`),
+          fetch(`${apiUrl}/subscriptions/user/${currentUserId}`)
         ]);
 
         const pkgs = await pkgRes.json();
@@ -70,7 +71,8 @@ function SubscriptionContent() {
 
     setIsCheckingOut(packageId);
     try {
-      const res = await fetch('http://localhost:3001/api/subscriptions/checkout', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const res = await fetch(`${apiUrl}/subscriptions/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.userId, packageId })

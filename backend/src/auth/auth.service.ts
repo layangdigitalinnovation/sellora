@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,15 @@ export class AuthService {
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOne(email);
     if (user && await bcrypt.compare(pass, user.password)) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
+  async getUserById(id: string) {
+    const user = await this.usersService.findById(id);
+    if (user) {
       const { password, ...result } = user;
       return result;
     }
@@ -40,10 +50,23 @@ export class AuthService {
     }
     
     const hashedPassword = await bcrypt.hash(data.password, 10);
+    
+    let referredById: string | null = null;
+    if (data.referralCode) {
+      const referrer = await this.usersService.findByReferralCode(data.referralCode);
+      if (referrer) {
+        referredById = referrer.id;
+      }
+    }
+
+    const referralCode = crypto.randomBytes(4).toString('hex'); // 8-char random hex
+
     const user = await this.usersService.create({
       email: data.email,
       password: hashedPassword,
-      name: data.name
+      name: data.name,
+      referralCode,
+      ...(referredById ? { referredBy: { connect: { id: referredById } } } : {})
     });
 
     const { password, ...result } = user;

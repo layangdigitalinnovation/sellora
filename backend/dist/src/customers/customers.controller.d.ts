@@ -9,10 +9,10 @@ export declare class CustomersController {
         createdAt: Date;
         updatedAt: Date;
         storeId: string;
-        tags: string[];
         phone: string | null;
         totalSpent: number;
         totalOrders: number;
+        tags: string[];
         notes: string | null;
         lastOrderAt: Date | null;
     }[]>;

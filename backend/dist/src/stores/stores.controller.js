@@ -31,6 +31,9 @@ let StoresController = class StoresController {
     updateMine(req, body) {
         return this.storesService.update(req.user.userId, body);
     }
+    getMyOrders(req) {
+        return this.storesService.getOrdersByUserId(req.user.userId);
+    }
     getBySlug(slug) {
         return this.storesService.findBySlug(slug);
     }
@@ -62,6 +65,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], StoresController.prototype, "updateMine", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me/orders'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], StoresController.prototype, "getMyOrders", null);
 __decorate([
     (0, common_1.Get)(':slug'),
     __param(0, (0, common_1.Param)('slug')),

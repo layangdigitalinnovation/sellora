@@ -47,6 +47,7 @@ const common_1 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
+const crypto = __importStar(require("crypto"));
 let AuthService = class AuthService {
     usersService;
     jwtService;
@@ -57,6 +58,14 @@ let AuthService = class AuthService {
     async validateUser(email, pass) {
         const user = await this.usersService.findOne(email);
         if (user && await bcrypt.compare(pass, user.password)) {
+            const { password, ...result } = user;
+            return result;
+        }
+        return null;
+    }
+    async getUserById(id) {
+        const user = await this.usersService.findById(id);
+        if (user) {
             const { password, ...result } = user;
             return result;
         }
@@ -81,10 +90,20 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('User already exists');
         }
         const hashedPassword = await bcrypt.hash(data.password, 10);
+        let referredById = null;
+        if (data.referralCode) {
+            const referrer = await this.usersService.findByReferralCode(data.referralCode);
+            if (referrer) {
+                referredById = referrer.id;
+            }
+        }
+        const referralCode = crypto.randomBytes(4).toString('hex');
         const user = await this.usersService.create({
             email: data.email,
             password: hashedPassword,
-            name: data.name
+            name: data.name,
+            referralCode,
+            ...(referredById ? { referredBy: { connect: { id: referredById } } } : {})
         });
         const { password, ...result } = user;
         return this.login(result);

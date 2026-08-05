@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminController = void 0;
 const common_1 = require("@nestjs/common");
@@ -23,6 +26,15 @@ let AdminController = class AdminController {
     async getSellers() {
         return this.adminService.getSellers();
     }
+    async getSettings() {
+        return this.adminService.getSettings();
+    }
+    async updateSettings(body) {
+        return this.adminService.updateSettings(body);
+    }
+    async backfill() {
+        return this.adminService.backfillCustomers();
+    }
 };
 exports.AdminController = AdminController;
 __decorate([
@@ -37,6 +49,25 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "getSellers", null);
+__decorate([
+    (0, common_1.Get)('settings'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getSettings", null);
+__decorate([
+    (0, common_1.Post)('settings'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "updateSettings", null);
+__decorate([
+    (0, common_1.Get)('backfill'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "backfill", null);
 exports.AdminController = AdminController = __decorate([
     (0, common_1.Controller)('api/admin'),
     __metadata("design:paramtypes", [admin_service_1.AdminService])

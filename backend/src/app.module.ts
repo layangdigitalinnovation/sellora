@@ -16,6 +16,7 @@ import { WithdrawalsModule } from './withdrawals/withdrawals.module';
 import { StorageModule } from './storage/storage.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { BlogsModule } from './blogs/blogs.module';
+import { ReferralsModule } from './referrals/referrals.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { BlogsModule } from './blogs/blogs.module';
     WithdrawalsModule,
     StorageModule,
     BookingsModule,
-    BlogsModule
+    BlogsModule,
+    ReferralsModule
   ],
   controllers: [AppController],
   providers: [AppService],

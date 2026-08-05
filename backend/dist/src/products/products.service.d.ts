@@ -8,6 +8,7 @@ export declare class ProductsService {
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -24,7 +25,6 @@ export declare class ProductsService {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     }>;
     create(userId: string, data: any): Promise<{
         id: string;
@@ -32,9 +32,9 @@ export declare class ProductsService {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;
@@ -52,11 +52,11 @@ export declare class ProductsService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            productId: string;
             startTime: Date;
             endTime: Date;
             maxParticipants: number;
             meetingLink: string | null;
-            productId: string;
         }[];
     } & {
         id: string;
@@ -64,9 +64,9 @@ export declare class ProductsService {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;
@@ -84,11 +84,11 @@ export declare class ProductsService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            productId: string;
             startTime: Date;
             endTime: Date;
             maxParticipants: number;
             meetingLink: string | null;
-            productId: string;
         }[];
     } & {
         id: string;
@@ -96,9 +96,9 @@ export declare class ProductsService {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;
@@ -117,9 +117,9 @@ export declare class ProductsService {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;
@@ -138,9 +138,9 @@ export declare class ProductsService {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;

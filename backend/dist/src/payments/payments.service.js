@@ -146,6 +146,34 @@ let PaymentsService = class PaymentsService {
                             }
                         }
                     });
+                    const existingCustomer = await this.prisma.customer.findFirst({
+                        where: { storeId: order.storeId, email: order.buyerEmail }
+                    });
+                    if (existingCustomer) {
+                        await this.prisma.customer.update({
+                            where: { id: existingCustomer.id },
+                            data: {
+                                totalSpent: { increment: order.amount },
+                                totalOrders: { increment: 1 },
+                                lastOrderAt: new Date(),
+                                name: order.buyerName,
+                                phone: order.buyerPhone || existingCustomer.phone
+                            }
+                        });
+                    }
+                    else {
+                        await this.prisma.customer.create({
+                            data: {
+                                storeId: order.storeId,
+                                email: order.buyerEmail,
+                                name: order.buyerName,
+                                phone: order.buyerPhone,
+                                totalSpent: order.amount,
+                                totalOrders: 1,
+                                lastOrderAt: new Date()
+                            }
+                        });
+                    }
                 }
             }
             catch (e) {

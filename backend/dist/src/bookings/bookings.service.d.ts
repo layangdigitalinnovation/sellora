@@ -12,30 +12,30 @@ export declare class BookingsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
         startTime: Date;
         endTime: Date;
         maxParticipants: number;
         meetingLink: string | null;
-        productId: string;
     }>;
     getByProduct(productId: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
         startTime: Date;
         endTime: Date;
         maxParticipants: number;
         meetingLink: string | null;
-        productId: string;
     }[]>;
     remove(userId: string, id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
         startTime: Date;
         endTime: Date;
         maxParticipants: number;
         meetingLink: string | null;
-        productId: string;
     }>;
 }

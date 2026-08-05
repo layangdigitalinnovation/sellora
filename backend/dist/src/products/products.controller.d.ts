@@ -8,9 +8,9 @@ export declare class ProductsController {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;
@@ -28,11 +28,11 @@ export declare class ProductsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            productId: string;
             startTime: Date;
             endTime: Date;
             maxParticipants: number;
             meetingLink: string | null;
-            productId: string;
         }[];
     } & {
         id: string;
@@ -40,9 +40,9 @@ export declare class ProductsController {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;
@@ -60,11 +60,11 @@ export declare class ProductsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            productId: string;
             startTime: Date;
             endTime: Date;
             maxParticipants: number;
             meetingLink: string | null;
-            productId: string;
         }[];
     } & {
         id: string;
@@ -72,9 +72,9 @@ export declare class ProductsController {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;
@@ -93,9 +93,9 @@ export declare class ProductsController {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;
@@ -114,9 +114,9 @@ export declare class ProductsController {
         updatedAt: Date;
         description: string | null;
         isActive: boolean;
-        title: string;
         storeId: string;
         type: import("@prisma/client").$Enums.ProductType;
+        title: string;
         price: number;
         originalPrice: number | null;
         imageUrl: string | null;

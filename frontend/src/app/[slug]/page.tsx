@@ -28,6 +28,23 @@ export default function StorePage() {
         }
         const data = await res.json();
         setStore(data);
+        
+        // Track View
+        let vid = localStorage.getItem('vid');
+        if (!vid) {
+          vid = Math.random().toString(36).substring(2) + Date.now().toString(36);
+          localStorage.setItem('vid', vid);
+        }
+        fetch('http://127.0.0.1:3001/api/analytics/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            storeId: data.id,
+            eventType: 'VIEW',
+            visitorId: vid
+          })
+        }).catch(e => console.error('Failed to track view', e));
+
       } catch (err: any) {
         setError(err.message || 'Terjadi kesalahan.');
       } finally {

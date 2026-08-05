@@ -16,19 +16,27 @@ exports.PaymentsController = void 0;
 const common_1 = require("@nestjs/common");
 const payments_service_1 = require("./payments.service");
 const storage_service_1 = require("../storage/storage.service");
+const subscriptions_service_1 = require("../subscriptions/subscriptions.service");
 let PaymentsController = class PaymentsController {
     paymentsService;
     storageService;
-    constructor(paymentsService, storageService) {
+    subscriptionsService;
+    constructor(paymentsService, storageService, subscriptionsService) {
         this.paymentsService = paymentsService;
         this.storageService = storageService;
+        this.subscriptionsService = subscriptionsService;
     }
     async checkout(body) {
         return this.paymentsService.checkout(body);
     }
     async xenditWebhook(body, req) {
         const webhookToken = req.headers['x-callback-token'];
-        await this.paymentsService.handleXenditWebhook(body, webhookToken);
+        if (body && body.external_id && body.external_id.startsWith('sub_')) {
+            await this.subscriptionsService.handleWebhook(body, webhookToken);
+        }
+        else {
+            await this.paymentsService.handleXenditWebhook(body, webhookToken);
+        }
         return { success: true };
     }
     async getOrder(id) {
@@ -120,6 +128,7 @@ __decorate([
 exports.PaymentsController = PaymentsController = __decorate([
     (0, common_1.Controller)('api/payments'),
     __metadata("design:paramtypes", [payments_service_1.PaymentsService,
-        storage_service_1.StorageService])
+        storage_service_1.StorageService,
+        subscriptions_service_1.SubscriptionsService])
 ], PaymentsController);
 //# sourceMappingURL=payments.controller.js.map

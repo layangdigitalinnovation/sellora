@@ -11,6 +11,7 @@ export declare class StoresService {
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -27,13 +28,13 @@ export declare class StoresService {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     }>;
     findByUserId(userId: string): Promise<{
         id: string;
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -50,8 +51,50 @@ export declare class StoresService {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     } | null>;
+    getOrdersByUserId(userId: string): Promise<({
+        product: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            description: string | null;
+            isActive: boolean;
+            storeId: string;
+            type: import("@prisma/client").$Enums.ProductType;
+            title: string;
+            price: number;
+            originalPrice: number | null;
+            imageUrl: string | null;
+            fileUrl: string | null;
+            fileSize: number | null;
+            mimeType: string | null;
+            isPwyw: boolean;
+            minPwywPrice: number | null;
+            flashSaleEndDate: Date | null;
+            flashSaleMaxQuota: number | null;
+            totalSales: number;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        storeId: string;
+        productId: string;
+        bookingSlotId: string | null;
+        buyerEmail: string;
+        buyerName: string;
+        buyerPhone: string | null;
+        buyerAddress: string | null;
+        amount: number;
+        status: import("@prisma/client").$Enums.OrderStatus;
+        paymentGateway: string | null;
+        paymentMethod: string | null;
+        paymentRef: string | null;
+        externalId: string | null;
+        paidAt: Date | null;
+        downloadUrl: string | null;
+        downloadExpiry: Date | null;
+    })[]>;
     findBySlug(slug: string): Promise<{
         products: {
             id: string;
@@ -59,9 +102,9 @@ export declare class StoresService {
             updatedAt: Date;
             description: string | null;
             isActive: boolean;
-            title: string;
             storeId: string;
             type: import("@prisma/client").$Enums.ProductType;
+            title: string;
             price: number;
             originalPrice: number | null;
             imageUrl: string | null;
@@ -79,6 +122,7 @@ export declare class StoresService {
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -95,13 +139,13 @@ export declare class StoresService {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     }>;
     update(userId: string, data: Prisma.StoreUpdateInput): Promise<{
         id: string;
         name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
         slug: string;
         customDomain: string | null;
         description: string | null;
@@ -118,6 +162,5 @@ export declare class StoresService {
         ctaLink: string | null;
         isVerified: boolean;
         isActive: boolean;
-        userId: string;
     }>;
 }

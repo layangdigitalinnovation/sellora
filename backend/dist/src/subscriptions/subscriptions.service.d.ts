@@ -73,9 +73,9 @@ export declare class SubscriptionsService {
         updatedAt: Date;
         userId: string;
         status: import("@prisma/client").$Enums.SubscriptionStatus;
+        paymentRef: string | null;
         startDate: Date;
         endDate: Date | null;
-        paymentRef: string | null;
         packageId: string;
     }) | null>;
 }

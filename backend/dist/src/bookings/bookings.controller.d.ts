@@ -6,30 +6,30 @@ export declare class BookingsController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
         startTime: Date;
         endTime: Date;
         maxParticipants: number;
         meetingLink: string | null;
-        productId: string;
     }>;
     getByProduct(productId: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
         startTime: Date;
         endTime: Date;
         maxParticipants: number;
         meetingLink: string | null;
-        productId: string;
     }[]>;
     remove(req: any, id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
         startTime: Date;
         endTime: Date;
         maxParticipants: number;
         meetingLink: string | null;
-        productId: string;
     }>;
 }

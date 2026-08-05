@@ -56,10 +56,12 @@ import {
   Clock
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import ReferralsTab from '@/components/ReferralsTab';
+import * as XLSX from 'xlsx';
 
 const STORE_DOMAIN = process.env.NEXT_PUBLIC_STORE_DOMAIN || 'kamu.dijaminsuka.com';
 
-type View = 'home' | 'my-link' | 'appearance' | 'analytics' | 'orders' | 'settings' | 'add-product' | 'customers' | 'earnings';
+type View = 'home' | 'my-link' | 'appearance' | 'analytics' | 'orders' | 'settings' | 'add-product' | 'customers' | 'earnings' | 'referrals';
 
 export default function DashboardPage() {
   const { lang, setLang, t } = useLanguage();
@@ -87,11 +89,16 @@ export default function DashboardPage() {
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isUpgradeLimitModalOpen, setIsUpgradeLimitModalOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [productSearch, setProductSearch] = useState('');
   const [productFilter, setProductFilter] = useState('ALL');
   const [productPage, setProductPage] = useState(1);
   const productsPerPage = 5;
+
+  const [orderSearch, setOrderSearch] = useState('');
+  const [orderFilter, setOrderFilter] = useState('ALL');
+
 
   const [visitorPeriod, setVisitorPeriod] = useState<'weekly' | 'monthly'>('weekly');
   const [visitorChartData, setVisitorChartData] = useState<{labels: string[], data: number[]}>({labels: [], data: []});
@@ -143,28 +150,26 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if(!token) return;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
-    fetch(`${apiUrl}/api/analytics/chart?period=${visitorPeriod}`, {
+    fetch(`http://127.0.0.1:3001/api/analytics/chart?period=${visitorPeriod}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(r => r.json())
     .then(data => {
       if(data.labels) setVisitorChartData(data);
     })
-    .catch(console.error);
+    .catch(e => console.error(e));
   }, [visitorPeriod, token]);
 
   useEffect(() => {
     if(!token) return;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
-    fetch(`${apiUrl}/api/analytics/funnel?period=${analyticsPeriod}`, {
+    fetch(`http://127.0.0.1:3001/api/analytics/funnel?period=${analyticsPeriod}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(r => r.json())
     .then(data => {
       if(data.views !== undefined) setFunnelData(data);
     })
-    .catch(console.error);
+    .catch(e => console.error(e));
   }, [analyticsPeriod, token]);
 
   useEffect(() => {
@@ -181,7 +186,7 @@ export default function DashboardPage() {
         if (!profileRes.ok) throw new Error('Unauthorized');
         const profileData = await profileRes.json();
 
-        if (profileData.userId) {
+        if (profileData.id || profileData.userId) {
           setUser(profileData);
 
           if (profileData.role === 'ADMIN') {
@@ -218,17 +223,19 @@ export default function DashboardPage() {
                 ctaLink: storeData.ctaLink || ''
               });
 
-              const [productsRes, customersRes, statsRes, withdrawalsRes] = await Promise.all([
+              const [productsRes, customersRes, statsRes, withdrawalsRes, ordersRes] = await Promise.all([
                 fetch('http://127.0.0.1:3001/api/products', { headers: { 'Authorization': `Bearer ${token}` } }),
                 fetch('http://127.0.0.1:3001/api/customers', { headers: { 'Authorization': `Bearer ${token}` } }),
                 fetch('http://127.0.0.1:3001/api/analytics/stats', { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch('http://127.0.0.1:3001/api/withdrawals', { headers: { 'Authorization': `Bearer ${token}` } })
+                fetch('http://127.0.0.1:3001/api/withdrawals', { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch('http://127.0.0.1:3001/api/stores/me/orders', { headers: { 'Authorization': `Bearer ${token}` } })
               ]);
 
               if (productsRes.ok) setProducts(await productsRes.json());
               if (customersRes.ok) setCustomers(await customersRes.json());
               if (statsRes.ok) setStats(await statsRes.json());
               if (withdrawalsRes.ok) setWithdrawals(await withdrawalsRes.json());
+              if (ordersRes.ok) setOrders(await ordersRes.json());
 
               setBankDetails({
                 bankName: profileData.bankName || '',
@@ -307,7 +314,7 @@ export default function DashboardPage() {
         })
       });
       const data = await res.json();
-      if (data.id) {
+      if (res.ok && data.id) {
         if (isEditing) {
           setProducts(products.map(p => p.id === data.id ? data : p));
           showNotification(t('product_modal.success_updated') || 'Produk berhasil diperbarui!');
@@ -320,9 +327,14 @@ export default function DashboardPage() {
         setCurrentStep(1);
         setNewProduct({ title: '', price: '', originalPrice: '', type: 'DIGITAL_FILE', description: '', platform: 'upload', fileUrl: '', imageUrl: '', isPwyw: false, minPwywPrice: '', isFlashSale: false, flashSaleEndDate: '', flashSaleMaxQuota: '', bookingSlots: [] });
         setEditingProduct(null);
+      } else if (res.status === 403 && data.message?.includes('Starter plan')) {
+        setIsProductModalOpen(false);
+        setIsUpgradeLimitModalOpen(true);
+      } else {
+        throw new Error(data.message || 'Error occurred');
       }
-    } catch (err) {
-      showNotification(editingProduct ? (t('product_modal.error_updating') || 'Gagal memperbarui produk') : (t('product_modal.error_adding') || 'Gagal menambahkan produk'), 'error');
+    } catch (err: any) {
+      showNotification(err.message || (editingProduct ? (t('product_modal.error_updating') || 'Gagal memperbarui produk') : (t('product_modal.error_adding') || 'Gagal menambahkan produk')), 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -438,19 +450,14 @@ export default function DashboardPage() {
     if (customers.length === 0) return showNotification('Tidak ada data pelanggan', 'error');
 
     const headers = ['Nama', 'Email', 'Total Pesanan', 'Total Belanja'];
-    const csvData = customers.map(c => [c.name, c.email, c.ordersCount || 0, c.totalSpent || 0]);
+    const data = customers.map(c => [c.name, c.email, c.totalOrders || 0, c.totalSpent || 0]);
 
-    let csvContent = "data:text/csv;charset=utf-8,"
-      + headers.join(",") + "\n"
-      + csvData.map(e => e.join(",")).join("\n");
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `pelanggan_${store.slug}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    showNotification('Database pelanggan berhasil diexport!');
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Pelanggan");
+    
+    XLSX.writeFile(workbook, `pelanggan_${store?.slug || 'toko'}.xlsx`);
+    showNotification('Database pelanggan berhasil diexport ke Excel!');
   };
 
   const handleLogout = () => {
@@ -556,6 +563,7 @@ export default function DashboardPage() {
               { id: 'customers', icon: Users, label: t('nav.customers') || 'Pelanggan' },
               { id: 'earnings', icon: Wallet, label: t('nav.earnings') || 'Pendapatan' },
               { id: 'settings', icon: Settings, label: t('nav.settings') || 'Pengaturan' },
+              { id: 'referrals', icon: Share2, label: lang === 'en' ? 'Referrals' : 'Afiliasi / Referral' },
               { id: 'subscription', icon: Shield, label: t('nav.subscription') || 'Langganan', isRoute: true },
             ].map((item) => (
               <button
@@ -605,6 +613,18 @@ export default function DashboardPage() {
 
   const totalProductPages = Math.ceil(filteredProducts.length / productsPerPage);
   const paginatedProducts = filteredProducts.slice((productPage - 1) * productsPerPage, productPage * productsPerPage);
+
+  const filteredOrders = orders.filter(o => {
+    const searchString = orderSearch.toLowerCase();
+    const matchesSearch = 
+      (o.id || '').toLowerCase().includes(searchString) ||
+      (o.buyerName || '').toLowerCase().includes(searchString) ||
+      (o.buyerEmail || '').toLowerCase().includes(searchString) ||
+      (o.product?.name || '').toLowerCase().includes(searchString);
+      
+    if (orderFilter === 'ALL') return matchesSearch;
+    return matchesSearch && o.status === orderFilter;
+  });
 
   if (user?.role === 'ADMIN') {
     return (
@@ -733,7 +753,7 @@ export default function DashboardPage() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => window.location.href = '/dashboard/subscription'}
-                      className="px-6 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-100 hover:scale-105 transition-all flex items-center gap-2.5"
+                      className="px-6 py-4 bg-linear-to-r from-amber-400 to-orange-500 text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-100 hover:scale-105 transition-all flex items-center gap-2.5"
                     >
                       <Gem className="w-4 h-4" /> Upgrade
                     </button>
@@ -929,7 +949,7 @@ export default function DashboardPage() {
                         <select
                           value={productFilter}
                           onChange={(e) => { setProductFilter(e.target.value); setProductPage(1); }}
-                          className="bg-white border border-slate-200 focus:border-[#7c2cff] focus:ring-2 focus:ring-[#7c2cff]/20 rounded-xl pl-9 pr-8 py-2 outline-none font-bold text-sm text-slate-700 appearance-none transition-all cursor-pointer h-[38px]"
+                          className="bg-white border border-slate-200 focus:border-[#7c2cff] focus:ring-2 focus:ring-[#7c2cff]/20 rounded-xl pl-9 pr-8 py-2 outline-none font-bold text-sm text-slate-700 appearance-none transition-all cursor-pointer h-9.5"
                         >
                           <option value="ALL">Semua Tipe</option>
                           <option value="DIGITAL_FILE">Digital File</option>
@@ -1139,7 +1159,7 @@ export default function DashboardPage() {
                           value={storeSettings.description}
                           onChange={(e) => setStoreSettings({ ...storeSettings, description: e.target.value })}
                           placeholder="Deskripsikan diri Anda atau toko Anda..."
-                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-700 focus:bg-white focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all min-h-[100px]"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-700 focus:bg-white focus:border-[#7c2cff] focus:ring-4 focus:ring-indigo-50 transition-all min-h-25"
                         ></textarea>
                       </div>
 
@@ -1290,12 +1310,34 @@ export default function DashboardPage() {
                     ))}
                   </div>
 
-                  <div className="h-80 w-full flex items-center justify-center bg-slate-50/30 rounded-[2.5rem] border-2 border-dashed border-slate-100">
-                    <div className="text-center">
-                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
-                        <TrendingUp className="w-8 h-8" />
+                  <div className="h-80 w-full flex flex-col justify-center bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8">
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-8">{t('dashboard_content.conversion_funnel') || 'Funnel Konversi'}</h4>
+                    <div className="flex-1 flex flex-col justify-center gap-6">
+                      
+                      <div className="w-full flex items-center gap-4 group">
+                        <div className="w-24 text-xs font-black text-slate-400 uppercase tracking-widest">Views</div>
+                        <div className="flex-1 h-10 bg-slate-50 rounded-2xl overflow-hidden relative">
+                           <div className="absolute left-0 top-0 bottom-0 bg-slate-900 rounded-2xl transition-all duration-1000 ease-out" style={{ width: '100%' }}></div>
+                        </div>
+                        <div className="w-16 text-right text-lg font-black text-slate-900">{funnelData.views}</div>
                       </div>
-                      <p className="text-sm font-black text-slate-300 uppercase tracking-widest">{t('dashboard_content.waiting_data') || 'Menunggu Data Kunjungan'}</p>
+                      
+                      <div className="w-full flex items-center gap-4 group">
+                        <div className="w-24 text-xs font-black text-slate-400 uppercase tracking-widest">Clicks</div>
+                        <div className="flex-1 h-10 bg-slate-50 rounded-2xl overflow-hidden relative">
+                           <div className="absolute left-0 top-0 bottom-0 bg-[#7c2cff] rounded-2xl transition-all duration-1000 ease-out" style={{ width: funnelData.views > 0 ? `${(funnelData.clicks/funnelData.views)*100}%` : '0%' }}></div>
+                        </div>
+                        <div className="w-16 text-right text-lg font-black text-slate-900">{funnelData.clicks}</div>
+                      </div>
+                      
+                      <div className="w-full flex items-center gap-4 group">
+                        <div className="w-24 text-xs font-black text-slate-400 uppercase tracking-widest">Sales</div>
+                        <div className="flex-1 h-10 bg-slate-50 rounded-2xl overflow-hidden relative">
+                           <div className="absolute left-0 top-0 bottom-0 bg-emerald-500 rounded-2xl transition-all duration-1000 ease-out" style={{ width: funnelData.views > 0 ? `${(funnelData.paid/funnelData.views)*100}%` : '0%' }}></div>
+                        </div>
+                        <div className="w-16 text-right text-lg font-black text-slate-900">{funnelData.paid}</div>
+                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -1318,7 +1360,7 @@ export default function DashboardPage() {
                     onClick={exportCustomers}
                     className="flex items-center gap-2 px-6 py-3 bg-[#7c2cff] text-white rounded-xl font-black text-sm shadow-xl shadow-indigo-100 hover:scale-105 transition-all"
                   >
-                    <ArrowDownToLine className="w-4 h-4" /> Export CSV
+                    <ArrowDownToLine className="w-4 h-4" /> Export Excel
                   </button>
                 </div>
 
@@ -1331,7 +1373,6 @@ export default function DashboardPage() {
                           <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('dashboard_content.customer_email') || 'Email'}</th>
                           <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('dashboard_content.customer_orders') || 'Pesanan'}</th>
                           <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('dashboard_content.customer_spent') || 'Total Belanja'}</th>
-                          <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('dashboard_content.customer_action') || 'Aksi'}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-50">
@@ -1346,18 +1387,13 @@ export default function DashboardPage() {
                               </div>
                             </td>
                             <td className="px-8 py-5 font-medium text-slate-500">{c.email}</td>
-                            <td className="px-8 py-5 text-center font-black text-slate-700">{c.ordersCount || 0}</td>
+                            <td className="px-8 py-5 text-center font-black text-slate-700">{c.totalOrders || 0}</td>
                             <td className="px-8 py-5 text-right font-black text-slate-900">Rp {(c.totalSpent || 0).toLocaleString()}</td>
-                            <td className="px-8 py-5">
-                              <button className="p-2 text-slate-300 hover:text-slate-600 transition-colors">
-                                <ChevronRight className="w-5 h-5" />
-                              </button>
-                            </td>
                           </tr>
                         ))}
                         {customers.length === 0 && (
                           <tr>
-                            <td colSpan={5} className="px-8 py-20 text-center">
+                            <td colSpan={4} className="px-8 py-20 text-center">
                               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
                                 <Users className="w-8 h-8" />
                               </div>
@@ -1387,9 +1423,25 @@ export default function DashboardPage() {
                   <div className="flex gap-2">
                     <div className="relative">
                       <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input type="text" placeholder={t('dashboard_content.search_orders') || "Cari pesanan..."} className="bg-slate-100 border-none rounded-xl py-3 pl-10 pr-4 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-indigo-100/50 w-64" />
+                      <input 
+                        type="text" 
+                        value={orderSearch}
+                        onChange={(e) => setOrderSearch(e.target.value)}
+                        placeholder={t('dashboard_content.search_orders') || "Cari pesanan..."} 
+                        className="bg-slate-100 border-none rounded-xl py-3 pl-10 pr-4 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-indigo-100/50 w-64" 
+                      />
                     </div>
-                    <button className="p-3 bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200 transition-all"><Filter className="w-5 h-5" /></button>
+                    <select 
+                      value={orderFilter}
+                      onChange={(e) => setOrderFilter(e.target.value)}
+                      className="bg-slate-100 border-none rounded-xl px-4 py-3 outline-none font-bold text-sm text-slate-700 transition-all cursor-pointer"
+                    >
+                      <option value="ALL">Semua Status</option>
+                      <option value="PAID">Paid</option>
+                      <option value="PENDING">Pending</option>
+                      <option value="EXPIRED">Expired</option>
+                      <option value="FAILED">Failed</option>
+                    </select>
                   </div>
                 </div>
 
@@ -1406,7 +1458,36 @@ export default function DashboardPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-50">
-                        {orders.length === 0 && (
+                        {filteredOrders.map((o, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="px-8 py-5 text-sm font-black text-slate-900">
+                              #{o.id.substring(0, 8)}
+                              <p className="text-[10px] text-slate-400 font-medium tracking-widest uppercase mt-0.5">{new Date(o.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                            </td>
+                            <td className="px-8 py-5">
+                              <p className="text-sm font-bold text-slate-700">{o.buyerName}</p>
+                              <p className="text-[10px] text-slate-400 font-medium tracking-widest uppercase mt-0.5">{o.buyerEmail}</p>
+                            </td>
+                            <td className="px-8 py-5">
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-[#7c2cff] border border-indigo-100">
+                                {o.product?.name || 'Produk'}
+                              </span>
+                            </td>
+                            <td className="px-8 py-5">
+                              <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                                o.status === 'PAID' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+                                o.status === 'PENDING' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
+                                'bg-red-50 text-red-600 border border-red-100'
+                              }`}>
+                                {o.status}
+                              </span>
+                            </td>
+                            <td className="px-8 py-5 text-right font-black text-slate-900">
+                              Rp {o.amount.toLocaleString('id-ID')}
+                            </td>
+                          </tr>
+                        ))}
+                        {filteredOrders.length === 0 && (
                           <tr>
                             <td colSpan={5} className="px-8 py-20 text-center">
                               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
@@ -1569,7 +1650,7 @@ export default function DashboardPage() {
 
                             <div className="space-y-3">
                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('product_modal.cover') || 'Gambar Cover'}</label>
-                              <div className="bg-white border-2 border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center text-center gap-4 h-[220px]">
+                              <div className="bg-white border-2 border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center text-center gap-4 h-55">
                                 {newProduct.imageUrl ? (
                                   <div className="relative w-full h-full rounded-xl overflow-hidden group">
                                     <img src={newProduct.imageUrl} alt="Preview" className="w-full h-full object-cover" />
@@ -1785,7 +1866,7 @@ export default function DashboardPage() {
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                   <input type="checkbox" className="sr-only peer" checked={newProduct.isPwyw} onChange={(e) => setNewProduct({ ...newProduct, isPwyw: e.target.checked })} />
-                                  <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#7c2cff]"></div>
+                                  <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#7c2cff]"></div>
                                 </label>
                               </div>
                               {newProduct.isPwyw && (
@@ -1816,7 +1897,7 @@ export default function DashboardPage() {
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                   <input type="checkbox" className="sr-only peer" checked={newProduct.isFlashSale} onChange={(e) => setNewProduct({ ...newProduct, isFlashSale: e.target.checked })} />
-                                  <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                  <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                                 </label>
                               </div>
                               {newProduct.isFlashSale && (
@@ -2087,11 +2168,14 @@ export default function DashboardPage() {
               </div>
             )}
 
+            {activeTab === 'referrals' && (
+              <ReferralsTab token={token} />
+            )}
           </div>
 
           {/* Right Sidebar - Preview (ONLY VISIBLE IN STORE & APPEARANCE MENU) */}
           {['my-link', 'appearance', 'add-product'].includes(activeTab) && (
-            <div className="w-full lg:w-[480px] bg-white border-l border-slate-100 p-10 hidden lg:flex flex-col sticky top-20 h-[calc(100vh-80px)] overflow-y-auto animate-in slide-in-from-right-10 duration-500">
+            <div className="w-full lg:w-120 bg-white border-l border-slate-100 p-10 hidden lg:flex flex-col sticky top-20 h-[calc(100vh-80px)] overflow-y-auto animate-in slide-in-from-right-10 duration-500">
               <div className="flex items-center justify-between mb-12">
                 <h3 className="font-black text-slate-800 tracking-tight">{t('dashboard_content.live_preview') || 'Tampilan Live'}</h3>
                 <div className="flex items-center gap-2.5 text-[10px] font-black text-[#7c2cff] uppercase tracking-[0.2em] bg-indigo-50 px-4 py-1.5 rounded-full">
@@ -2378,6 +2462,39 @@ export default function DashboardPage() {
                   <p className="text-[10px] text-red-500 font-bold text-center mt-2">{t('dashboard_content.no_bank_warning') || 'Anda belum mengatur rekening tujuan penarikan.'}</p>
                 )}
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Upgrade Limit Modal */}
+        {isUpgradeLimitModalOpen && (
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-100 flex items-center justify-center p-6 animate-in fade-in duration-300">
+            <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-6 text-amber-500">
+                <Gem className="w-10 h-10" />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 mb-2">Batas Produk Tercapai</h3>
+              <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+                Paket Starter hanya memungkinkan maksimal 3 produk aktif. Tingkatkan paket Anda untuk membuat produk tanpa batas dan nikmati fitur premium lainnya!
+              </p>
+              
+              <div className="flex gap-4 w-full">
+                <button 
+                  onClick={() => setIsUpgradeLimitModalOpen(false)}
+                  className="flex-1 py-4 bg-slate-50 text-slate-500 rounded-2xl font-black hover:bg-slate-100 transition-all"
+                >
+                  Batal
+                </button>
+                <button 
+                  onClick={() => {
+                    setIsUpgradeLimitModalOpen(false);
+                    window.location.href = '/dashboard/subscription';
+                  }}
+                  className="flex-1 py-4 bg-linear-to-r from-amber-400 to-orange-500 text-white rounded-2xl font-black shadow-xl shadow-orange-100 hover:scale-105 transition-all flex items-center justify-center gap-2"
+                >
+                  <Gem className="w-5 h-5" /> Upgrade
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -29,6 +29,12 @@ model User {
   Withdrawal     Withdrawal[]
   subscriptions  UserSubscription[]
   posts          Post[]
+  referralCode   String?            @unique
+  referredById   String?
+  referredBy     User?              @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals      User[]             @relation("UserReferrals")
+  referralCommissionsAsReferrer ReferralCommission[] @relation("ReferrerCommissions")
+  referralCommissionsAsReferee  ReferralCommission[] @relation("RefereeCommissions")
 }
 
 enum Plan {
@@ -224,6 +230,7 @@ model UserSubscription {
   paymentRef String?
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
+  referralCommissions ReferralCommission[]
 }
 
 enum SubscriptionStatus {
@@ -260,4 +267,29 @@ model Post {
   keywords        String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+}
+
+model ReferralCommission {
+  id             String             @id @default(uuid())
+  referrerId     String
+  referrer       User               @relation("ReferrerCommissions", fields: [referrerId], references: [id])
+  refereeId      String
+  referee        User               @relation("RefereeCommissions", fields: [refereeId], references: [id])
+  subscriptionId String
+  subscription   UserSubscription   @relation(fields: [subscriptionId], references: [id])
+  amount         Float
+  status         CommissionStatus   @default(PENDING)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+enum CommissionStatus {
+  PENDING
+  PAID
+}
+
+model SystemSetting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
 }

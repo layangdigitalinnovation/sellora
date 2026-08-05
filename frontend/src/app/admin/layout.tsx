@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, Package, LogOut, PenTool } from 'lucide-react';
+import { LayoutDashboard, Users, Package, LogOut, PenTool, Settings } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -55,6 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Kreator', href: '/admin/sellers', icon: <Users className="w-5 h-5" /> },
     { name: 'CMS Blog', href: '/admin/blog', icon: <PenTool className="w-5 h-5" /> },
     { name: 'Pengaturan Paket', href: '/admin/packages', icon: <Package className="w-5 h-5" /> },
+    { name: 'Pengaturan', href: '/admin/settings', icon: <Settings className="w-5 h-5" /> },
   ];
 
   return (

@@ -12,6 +12,18 @@ export class UsersService {
     });
   }
 
+  async findById(id: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  async findByReferralCode(referralCode: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { referralCode },
+    });
+  }
+
   async create(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({
       data,

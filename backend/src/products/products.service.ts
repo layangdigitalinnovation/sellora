@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, ProductType } from '@prisma/client';
 
@@ -14,6 +14,15 @@ export class ProductsService {
 
   async create(userId: string, data: any) {
     const store = await this.getStoreByUserId(userId);
+
+    // Check user plan limits
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (user?.plan === 'STARTER') {
+      const productCount = await this.prisma.product.count({ where: { storeId: store.id } });
+      if (productCount >= 3) {
+        throw new ForbiddenException('You have reached the maximum number of products (3) for the Starter plan. Please upgrade to create more products.');
+      }
+    }
 
     const productData: Prisma.ProductCreateInput = {
       store: { connect: { id: store.id } },

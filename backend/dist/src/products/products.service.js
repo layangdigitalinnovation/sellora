@@ -25,6 +25,13 @@ let ProductsService = class ProductsService {
     }
     async create(userId, data) {
         const store = await this.getStoreByUserId(userId);
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        if (user?.plan === 'STARTER') {
+            const productCount = await this.prisma.product.count({ where: { storeId: store.id } });
+            if (productCount >= 3) {
+                throw new common_1.ForbiddenException('You have reached the maximum number of products (3) for the Starter plan. Please upgrade to create more products.');
+            }
+        }
         const productData = {
             store: { connect: { id: store.id } },
             title: data.title,

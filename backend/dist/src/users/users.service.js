@@ -22,6 +22,16 @@ let UsersService = class UsersService {
             where: { email },
         });
     }
+    async findById(id) {
+        return this.prisma.user.findUnique({
+            where: { id },
+        });
+    }
+    async findByReferralCode(referralCode) {
+        return this.prisma.user.findUnique({
+            where: { referralCode },
+        });
+    }
     async create(data) {
         return this.prisma.user.create({
             data,

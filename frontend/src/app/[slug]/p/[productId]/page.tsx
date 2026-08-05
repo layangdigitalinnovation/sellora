@@ -31,8 +31,9 @@ export default function ProductDetailPage() {
     if (!slug || !productId) return;
     
     const fetchStore = async () => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
       try {
-        const res = await fetch(`http://localhost:3001/api/stores/${slug}`);
+        const res = await fetch(`${apiUrl}/stores/${slug}`);
         if (!res.ok) throw new Error('Toko tidak ditemukan.');
         const data = await res.json();
         setStore(data);
@@ -46,14 +47,14 @@ export default function ProductDetailPage() {
         }
 
         if (foundProduct.type === 'BOOKING' || foundProduct.type === 'EVENT') {
-          const slotsRes = await fetch(`http://localhost:3001/api/bookings/product/${productId}`);
+          const slotsRes = await fetch(`${apiUrl}/bookings/product/${productId}`);
           if (slotsRes.ok) {
             setSlots(await slotsRes.json());
           }
         }
 
         // Track VIEW
-        fetch('http://localhost:3001/api/analytics/track', {
+        fetch(`${apiUrl}/analytics/track`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -81,7 +82,8 @@ export default function ProductDetailPage() {
   const handleCheckoutClick = () => {
     // Track CHECKOUT_CLICK
     if (store && product) {
-      fetch('http://localhost:3001/api/analytics/track', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      fetch(`${apiUrl}/analytics/track`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -125,7 +127,8 @@ export default function ProductDetailPage() {
         payload.bookingSlotId = selectedSlotId;
       }
 
-      const res = await fetch('http://localhost:3001/api/payments/checkout', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const res = await fetch(`${apiUrl}/payments/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -31,8 +31,9 @@ let AuthController = class AuthController {
     async register(body) {
         return this.authService.register(body);
     }
-    getProfile(req) {
-        return req.user;
+    async getProfile(req) {
+        const fullUser = await this.authService.getUserById(req.user.userId);
+        return fullUser || req.user;
     }
 };
 exports.AuthController = AuthController;
@@ -57,7 +58,7 @@ __decorate([
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getProfile", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('api/auth'),

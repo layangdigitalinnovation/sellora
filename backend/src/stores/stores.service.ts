@@ -25,6 +25,17 @@ export class StoresService {
     });
   }
 
+  async getOrdersByUserId(userId: string) {
+    const store = await this.findByUserId(userId);
+    if (!store) throw new NotFoundException('Store not found');
+
+    return this.prisma.order.findMany({
+      where: { storeId: store.id },
+      include: { product: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async findBySlug(slug: string) {
     const store = await this.prisma.store.findUnique({
       where: { slug },

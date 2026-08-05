@@ -18,12 +18,21 @@ export default function RegisterPage() {
     setError('');
 
     try {
+      // Get referral code from cookie
+      const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return null;
+      };
+      const referralCode = getCookie('ref');
+
       const response = await fetch('http://127.0.0.1:3001/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password, name, referralCode }),
       });
 
       const data = await response.json();

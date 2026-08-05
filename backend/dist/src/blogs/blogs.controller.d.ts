@@ -24,12 +24,12 @@ export declare class BlogsController {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     })[]>;
     findOne(slug: string): Promise<{
         category: {
@@ -53,12 +53,12 @@ export declare class BlogsController {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     }>;
     create(data: any, req: any): Promise<{
         id: string;
@@ -70,12 +70,12 @@ export declare class BlogsController {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     }>;
     update(id: string, data: any): Promise<{
         id: string;
@@ -87,12 +87,12 @@ export declare class BlogsController {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     }>;
     remove(id: string): Promise<{
         id: string;
@@ -104,12 +104,12 @@ export declare class BlogsController {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     }>;
     findAllCategories(): Promise<{
         id: string;

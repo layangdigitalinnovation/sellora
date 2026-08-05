@@ -25,6 +25,7 @@ const withdrawals_module_1 = require("./withdrawals/withdrawals.module");
 const storage_module_1 = require("./storage/storage.module");
 const bookings_module_1 = require("./bookings/bookings.module");
 const blogs_module_1 = require("./blogs/blogs.module");
+const referrals_module_1 = require("./referrals/referrals.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -45,7 +46,8 @@ exports.AppModule = AppModule = __decorate([
             withdrawals_module_1.WithdrawalsModule,
             storage_module_1.StorageModule,
             bookings_module_1.BookingsModule,
-            blogs_module_1.BlogsModule
+            blogs_module_1.BlogsModule,
+            referrals_module_1.ReferralsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

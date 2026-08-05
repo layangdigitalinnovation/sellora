@@ -24,12 +24,12 @@ export declare class BlogsService {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     })[]>;
     findPostBySlug(slug: string): Promise<{
         category: {
@@ -53,12 +53,12 @@ export declare class BlogsService {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     }>;
     createPost(data: any, authorId: string): Promise<{
         id: string;
@@ -70,12 +70,12 @@ export declare class BlogsService {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     }>;
     updatePost(id: string, data: any): Promise<{
         id: string;
@@ -87,12 +87,12 @@ export declare class BlogsService {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     }>;
     deletePost(id: string): Promise<{
         id: string;
@@ -104,12 +104,12 @@ export declare class BlogsService {
         excerpt: string | null;
         coverImage: string | null;
         published: boolean;
+        authorId: string;
+        categoryId: string;
         publishedAt: Date | null;
         metaTitle: string | null;
         metaDescription: string | null;
         keywords: string | null;
-        categoryId: string;
-        authorId: string;
     }>;
     findAllCategories(): Promise<{
         id: string;

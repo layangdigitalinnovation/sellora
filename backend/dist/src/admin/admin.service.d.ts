@@ -12,12 +12,17 @@ export declare class AdminService {
         totalTransactionVolume: number;
         chartData: any[];
     }>;
+    backfillCustomers(): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     getSellers(): Promise<({
         Store: {
             id: string;
             name: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             slug: string;
             customDomain: string | null;
             description: string | null;
@@ -34,7 +39,6 @@ export declare class AdminService {
             ctaLink: string | null;
             isVerified: boolean;
             isActive: boolean;
-            userId: string;
         }[];
         subscriptions: ({
             package: {
@@ -54,14 +58,15 @@ export declare class AdminService {
             updatedAt: Date;
             userId: string;
             status: import("@prisma/client").$Enums.SubscriptionStatus;
+            paymentRef: string | null;
             startDate: Date;
             endDate: Date | null;
-            paymentRef: string | null;
             packageId: string;
         })[];
     } & {
         id: string;
         email: string;
+        referralCode: string | null;
         password: string;
         name: string;
         avatar: string | null;
@@ -74,5 +79,8 @@ export declare class AdminService {
         accountHolder: string | null;
         createdAt: Date;
         updatedAt: Date;
+        referredById: string | null;
     })[]>;
+    getSettings(): Promise<Record<string, string>>;
+    updateSettings(data: Record<string, string>): Promise<Record<string, string>>;
 }

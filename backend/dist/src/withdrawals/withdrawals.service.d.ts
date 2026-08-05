@@ -24,9 +24,9 @@ export declare class WithdrawalsService {
         updatedAt: Date;
         userId: string;
         amount: number;
+        status: import("@prisma/client").$Enums.WithdrawalStatus;
         fee: number;
         netAmount: number;
-        status: import("@prisma/client").$Enums.WithdrawalStatus;
         processedAt: Date | null;
     }[]>;
     requestWithdrawal(userId: string, amount: number): Promise<{
@@ -38,9 +38,9 @@ export declare class WithdrawalsService {
         updatedAt: Date;
         userId: string;
         amount: number;
+        status: import("@prisma/client").$Enums.WithdrawalStatus;
         fee: number;
         netAmount: number;
-        status: import("@prisma/client").$Enums.WithdrawalStatus;
         processedAt: Date | null;
     }>;
 }

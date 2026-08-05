@@ -77,6 +77,59 @@ export class AdminService {
     };
   }
 
+  async backfillCustomers() {
+    const users = await this.prisma.user.findMany({ include: { Store: true } });
+    
+    for (const user of users) {
+      if (!user.Store || user.Store.length === 0) continue;
+      const store = user.Store[0];
+      
+      const orders = await this.prisma.order.findMany({
+        where: { storeId: store.id, status: { in: ['PAID'] } }
+      });
+      
+      let totalBalance = 0;
+      for (const order of orders) {
+        totalBalance += order.amount;
+        
+        const existingCustomer = await this.prisma.customer.findFirst({
+          where: { storeId: store.id, email: order.buyerEmail }
+        });
+        
+        if (existingCustomer) {
+          await this.prisma.customer.update({
+            where: { id: existingCustomer.id },
+            data: {
+              totalSpent: { increment: order.amount },
+              totalOrders: { increment: 1 },
+              lastOrderAt: order.createdAt,
+              name: order.buyerName,
+              phone: order.buyerPhone || existingCustomer.phone
+            }
+          });
+        } else {
+          await this.prisma.customer.create({
+            data: {
+              storeId: store.id,
+              email: order.buyerEmail,
+              name: order.buyerName,
+              phone: order.buyerPhone,
+              totalSpent: order.amount,
+              totalOrders: 1,
+              lastOrderAt: order.createdAt
+            }
+          });
+        }
+      }
+      
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { balance: totalBalance }
+      });
+    }
+    return { success: true, message: 'Backfill completed' };
+  }
+
   async getSellers() {
     return this.prisma.user.findMany({
       where: { role: 'SELLER' },
@@ -91,5 +144,26 @@ export class AdminService {
       },
       orderBy: { createdAt: 'desc' }
     });
+  }
+
+  async getSettings() {
+    const settings = await this.prisma.systemSetting.findMany();
+    const config: Record<string, string> = {};
+    settings.forEach(s => {
+      config[s.key] = s.value;
+    });
+    return config;
+  }
+
+  async updateSettings(data: Record<string, string>) {
+    const keys = Object.keys(data);
+    for (const key of keys) {
+      await this.prisma.systemSetting.upsert({
+        where: { key },
+        update: { value: data[key] },
+        create: { key, value: data[key] }
+      });
+    }
+    return this.getSettings();
   }
 }

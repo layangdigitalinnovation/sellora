@@ -1,13 +1,15 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Req, Get, Param, Res, BadRequestException } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { StorageService } from '../storage/storage.service';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import type { Response } from 'express';
 
 @Controller('api/payments')
 export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
+    private readonly subscriptionsService: SubscriptionsService
   ) {}
 
   @Post('checkout')
@@ -19,7 +21,13 @@ export class PaymentsController {
   @HttpCode(HttpStatus.OK)
   async xenditWebhook(@Body() body: any, @Req() req: any) {
     const webhookToken = req.headers['x-callback-token'];
-    await this.paymentsService.handleXenditWebhook(body, webhookToken);
+    
+    if (body && body.external_id && body.external_id.startsWith('sub_')) {
+      await this.subscriptionsService.handleWebhook(body, webhookToken);
+    } else {
+      await this.paymentsService.handleXenditWebhook(body, webhookToken);
+    }
+    
     return { success: true };
   }
 
