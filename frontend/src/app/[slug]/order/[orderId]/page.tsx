@@ -25,7 +25,7 @@ export default function OrderSuccessPage() {
     
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/order/${orderId}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/payments/order/${orderId}`);
         if (!res.ok) throw new Error('Pesanan tidak ditemukan.');
         const data = await res.json();
         setOrder(data);
@@ -49,7 +49,7 @@ export default function OrderSuccessPage() {
 
   const fetchVideoUrl = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/order/${orderId}/video-url`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/payments/order/${orderId}/video-url`);
       const data = await res.json();
       if (data.url) setVideoUrl(data.url);
     } catch (e) {
@@ -162,9 +162,9 @@ export default function OrderSuccessPage() {
                  {order.product?.mimeType?.includes('video') ? (
                    videoUrl ? <SecureVideoPlayer src={videoUrl} /> : <div className="p-4 text-center text-sm">Memuat video...</div>
                  ) : order.product?.mimeType?.includes('pdf') ? (
-                   <SecurePDFViewer src={`${process.env.NEXT_PUBLIC_API_URL}/payments/order/${orderId}/download-pdf`} />
+                   <SecurePDFViewer src={`${process.env.NEXT_PUBLIC_API_URL!}/payments/order/${orderId}/download-pdf`} />
                  ) : (
-                   <a href={`${process.env.NEXT_PUBLIC_API_URL}/payments/order/${orderId}/download-file`} target="_blank" rel="noreferrer" className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-white" style={{ backgroundColor: primaryColor }}>
+                   <a href={`${process.env.NEXT_PUBLIC_API_URL!}/payments/order/${orderId}/download-file`} target="_blank" rel="noreferrer" className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-white" style={{ backgroundColor: primaryColor }}>
                      Unduh File <ExternalLink className="w-4 h-4" />
                    </a>
                  )}

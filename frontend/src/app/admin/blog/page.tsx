@@ -16,7 +16,7 @@ export default function AdminBlogList() {
 
   const fetchPosts = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/blogs?all=true`);
       if (res.ok) {
         const data = await res.json();
@@ -31,7 +31,7 @@ export default function AdminBlogList() {
     if (!confirm('Are you sure you want to delete this post?')) return;
     try {
       const token = localStorage.getItem('admin_token');
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/blogs/${id}`, {
         method: 'DELETE',
         headers: {

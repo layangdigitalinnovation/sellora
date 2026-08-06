@@ -31,7 +31,7 @@ export default function ProductDetailPage() {
     if (!slug || !productId) return;
     
     const fetchStore = async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       try {
         const res = await fetch(`${apiUrl}/stores/${slug}`);
         if (!res.ok) throw new Error('Toko tidak ditemukan.');
@@ -82,7 +82,7 @@ export default function ProductDetailPage() {
   const handleCheckoutClick = () => {
     // Track CHECKOUT_CLICK
     if (store && product) {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       fetch(`${apiUrl}/analytics/track`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -127,7 +127,7 @@ export default function ProductDetailPage() {
         payload.bookingSlotId = selectedSlotId;
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/payments/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

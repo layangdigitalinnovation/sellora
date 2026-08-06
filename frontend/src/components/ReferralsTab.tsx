@@ -20,7 +20,7 @@ export default function ReferralsTab({ token }: { token: string | null }) {
 
   const fetchData = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       
       const statsRes = await fetch(`${apiUrl}/referrals/stats`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -53,7 +53,7 @@ export default function ReferralsTab({ token }: { token: string | null }) {
     setShowWithdrawalsModal(true);
     setLoadingWithdrawals(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/withdrawals`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -71,7 +71,7 @@ export default function ReferralsTab({ token }: { token: string | null }) {
     setWithdrawError('');
     setWithdrawSuccess('');
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/withdrawals`, {
         method: 'POST',
         headers: {

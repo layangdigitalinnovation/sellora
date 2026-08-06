@@ -16,14 +16,14 @@ export default function AnalyticsDashboardPage() {
         const token = localStorage.getItem('token');
         if (!token) return router.push('/login');
 
-        const storeRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stores`, {
+        const storeRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/stores`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const stores = await storeRes.json();
         
         if (stores && stores.length > 0) {
           const storeId = stores[0].id;
-          const funnelRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/analytics/funnel/${storeId}`, {
+          const funnelRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/analytics/funnel/${storeId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const funnel = await funnelRes.json();

@@ -14,7 +14,7 @@ export default function AdminSellersPage() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/sellers`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL!}/admin/sellers`)
       .then(res => res.json())
       .then(res => {
         setSellers(res);

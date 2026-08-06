@@ -25,7 +25,7 @@ export default function AdminBlogEditor() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
         const res = await fetch(`${apiUrl}/blogs/categories/all`);
         if (res.ok) {
           const data = await res.json();
@@ -42,7 +42,7 @@ export default function AdminBlogEditor() {
     if (slug) {
       const fetchPost = async () => {
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
           const res = await fetch(`${apiUrl}/blogs/${slug}`);
           if (res.ok) {
             const data = await res.json();
@@ -71,7 +71,7 @@ export default function AdminBlogEditor() {
         return;
       }
       const token = localStorage.getItem('admin_token');
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const endpoint = postId ? `${apiUrl}/blogs/${postId}` : `${apiUrl}/blogs`;
       const response = await fetch(endpoint, {
         method: postId ? 'PATCH' : 'POST',

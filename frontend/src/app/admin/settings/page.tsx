@@ -9,7 +9,7 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
 
   useEffect(() => {
     fetchSettings();

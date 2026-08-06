@@ -17,7 +17,7 @@ export default function BlogPost() {
     if (!params.slug) return;
     const fetchPost = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
         const res = await fetch(`${apiUrl}/blogs/${params.slug}`);
         if (res.ok) {
           const data = await res.json();

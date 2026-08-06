@@ -24,7 +24,7 @@ export default function AdminBlogCategories() {
 
   const fetchCategories = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/blogs/categories/all`);
       if (res.ok) {
         const data = await res.json();
@@ -46,7 +46,7 @@ export default function AdminBlogCategories() {
   const handleSaveNew = async () => {
     if (!formData.name) return;
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/blogs/categories`, {
         method: 'POST',
         headers: getHeaders(),
@@ -68,7 +68,7 @@ export default function AdminBlogCategories() {
   const handleSaveEdit = async (id: string) => {
     if (!formData.name) return;
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/blogs/categories/${id}`, {
         method: 'PATCH',
         headers: getHeaders(),
@@ -90,7 +90,7 @@ export default function AdminBlogCategories() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this category? Make sure no posts are attached to it.')) return;
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/blogs/categories/${id}`, {
         method: 'DELETE',
         headers: getHeaders()

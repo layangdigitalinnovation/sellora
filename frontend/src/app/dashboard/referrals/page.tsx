@@ -19,12 +19,12 @@ export default function ReferralsPage() {
     try {
       const token = localStorage.getItem('token');
       
-      const statsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/referrals/stats`, {
+      const statsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/referrals/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (statsRes.ok) setStats(await statsRes.json());
 
-      const historyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/referrals/history`, {
+      const historyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/referrals/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (historyRes.ok) setHistory(await historyRes.json());
@@ -51,7 +51,7 @@ export default function ReferralsPage() {
     setWithdrawSuccess('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/withdrawals`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/withdrawals`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

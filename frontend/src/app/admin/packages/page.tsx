@@ -20,7 +20,7 @@ export default function AdminPackagesPage() {
 
   const fetchPackages = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscriptions/packages`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/subscriptions/packages`);
       const data = await res.json();
       setPackages(data);
     } catch (e) {
@@ -48,8 +48,8 @@ export default function AdminPackagesPage() {
     try {
       const method = form.id ? 'PUT' : 'POST';
       const url = form.id 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/packages/${form.id}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/packages`;
+        ? `${process.env.NEXT_PUBLIC_API_URL!}/subscriptions/packages/${form.id}`
+        : `${process.env.NEXT_PUBLIC_API_URL!}/subscriptions/packages`;
         
       await fetch(url, {
         method,

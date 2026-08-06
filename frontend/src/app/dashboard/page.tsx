@@ -150,7 +150,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if(!token) return;
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/analytics/chart?period=${visitorPeriod}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL!}/analytics/chart?period=${visitorPeriod}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(r => r.json())
@@ -162,7 +162,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if(!token) return;
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/analytics/funnel?period=${analyticsPeriod}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL!}/analytics/funnel?period=${analyticsPeriod}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(r => r.json())
@@ -180,7 +180,7 @@ export default function DashboardPage() {
 
     const fetchData = async () => {
       try {
-        const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/auth/me`, {
+        const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/auth/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!profileRes.ok) throw new Error('Unauthorized');
@@ -195,7 +195,7 @@ export default function DashboardPage() {
           }
 
 
-          const storeRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/stores/me`, {
+          const storeRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/stores/me`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
 
@@ -224,11 +224,11 @@ export default function DashboardPage() {
               });
 
               const [productsRes, customersRes, statsRes, withdrawalsRes, ordersRes] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/products`, { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/customers`, { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/analytics/stats`, { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/withdrawals`, { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/stores/me/orders`, { headers: { 'Authorization': `Bearer ${token}` } })
+                fetch(`${process.env.NEXT_PUBLIC_API_URL!}/products`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL!}/customers`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL!}/analytics/stats`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL!}/withdrawals`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL!}/stores/me/orders`, { headers: { 'Authorization': `Bearer ${token}` } })
               ]);
 
               if (productsRes.ok) setProducts(await productsRes.json());
@@ -263,7 +263,7 @@ export default function DashboardPage() {
   const handleCreateStore = async () => {
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/stores`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/stores`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -292,8 +292,8 @@ export default function DashboardPage() {
     try {
       const isEditing = !!editingProduct;
       const url = isEditing
-        ? `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/products/${editingProduct.id}`
-        : `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/products`;
+        ? `${process.env.NEXT_PUBLIC_API_URL!}/products/${editingProduct.id}`
+        : `${process.env.NEXT_PUBLIC_API_URL!}/products`;
 
       const { platform, ...productData } = newProduct;
 
@@ -381,7 +381,7 @@ export default function DashboardPage() {
 
   const handleToggleProduct = async (product: any) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/products/${product.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/products/${product.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -402,7 +402,7 @@ export default function DashboardPage() {
   const handleUpdateAppearance = async () => {
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/stores/me`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/stores/me`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -426,7 +426,7 @@ export default function DashboardPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/stores/me`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/stores/me`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -469,7 +469,7 @@ export default function DashboardPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/withdrawals/bank`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/withdrawals/bank`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(bankDetails)
@@ -492,7 +492,7 @@ export default function DashboardPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/withdrawals`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/withdrawals`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: parseFloat(withdrawAmount) })

@@ -27,7 +27,7 @@ function SubscriptionContent() {
 
     const fetchData = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
         const profileRes = await fetch(`${apiUrl}/auth/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -71,7 +71,7 @@ function SubscriptionContent() {
 
     setIsCheckingOut(packageId);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
       const res = await fetch(`${apiUrl}/subscriptions/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

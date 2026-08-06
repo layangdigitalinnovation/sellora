@@ -38,7 +38,7 @@ export default function BlogIndex() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
         const [postsRes, categoriesRes] = await Promise.all([
           fetch(`${apiUrl}/blogs`),
           fetch(`${apiUrl}/blogs/categories/all`)

@@ -9,7 +9,7 @@ export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/analytics`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL!}/admin/analytics`)
       .then(res => res.json())
       .then(res => {
         setData(res);
