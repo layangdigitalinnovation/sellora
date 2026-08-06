@@ -19,7 +19,7 @@ export default function StorePage() {
     
     const fetchStore = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:3001/api/stores/${slug}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/stores/${slug}`);
         if (!res.ok) {
           if (res.status === 404) {
             throw new Error('Toko tidak ditemukan.');
@@ -35,7 +35,7 @@ export default function StorePage() {
           vid = Math.random().toString(36).substring(2) + Date.now().toString(36);
           localStorage.setItem('vid', vid);
         }
-        fetch('http://127.0.0.1:3001/api/analytics/track', {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api'}/analytics/track`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
