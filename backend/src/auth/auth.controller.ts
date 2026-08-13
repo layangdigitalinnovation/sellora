@@ -9,10 +9,25 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() body: any) {
-    const user = await this.authService.validateUser(body.email, body.password);
-    if (!user) {
-      return { status: 401, message: 'Invalid credentials' };
+    if (!body || !body.email || !body.password) {
+      return {
+        status: 400,
+        message: 'Email and password are required',
+      };
     }
+
+    const user = await this.authService.validateUser(
+      body.email,
+      body.password,
+    );
+
+    if (!user) {
+      return {
+        status: 401,
+        message: 'Invalid credentials',
+      };
+    }
+
     return this.authService.login(user);
   }
 
