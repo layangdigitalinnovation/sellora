@@ -3,7 +3,7 @@ import { StoresService } from './stores.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Prisma } from '@prisma/client';
 
-@Controller('api/stores')
+@Controller('stores')
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 

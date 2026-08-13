@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, UseGuards, Request, Query } from '@nestjs/
 import { AnalyticsService } from './analytics.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('api/analytics')
+@Controller('analytics')
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 

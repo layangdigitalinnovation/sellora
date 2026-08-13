@@ -4,7 +4,7 @@ import { StorageService } from '../storage/storage.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import type { Response } from 'express';
 
-@Controller('api/payments')
+@Controller('payments')
 export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,

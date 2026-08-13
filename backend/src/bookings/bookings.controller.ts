@@ -2,7 +2,7 @@ import { Controller, Post, Get, Delete, Param, Body, UseGuards, Request } from '
 import { BookingsService } from './bookings.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('api/bookings')
+@Controller('bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 

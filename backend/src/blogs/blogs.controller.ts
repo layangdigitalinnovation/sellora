@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Re
 import { BlogsService } from './blogs.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('api/blogs')
+@Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
 

@@ -2,7 +2,7 @@ import { Controller, Post, Body, HttpCode, HttpStatus, Request, UseGuards, Get }
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Body, UseGuards, Request } from '@nestjs/co
 import { WithdrawalsService } from './withdrawals.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('api/withdrawals')
+@Controller('withdrawals')
 @UseGuards(JwtAuthGuard)
 export class WithdrawalsController {
   constructor(private readonly withdrawalsService: WithdrawalsService) {}
