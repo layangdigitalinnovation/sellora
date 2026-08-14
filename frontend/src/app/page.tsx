@@ -25,7 +25,7 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
 
         const res = await fetch(`${apiUrl}/subscriptions/packages`);
         if (res.ok) {
