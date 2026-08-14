@@ -35,7 +35,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CustomersController.prototype, "findAll", null);
 exports.CustomersController = CustomersController = __decorate([
-    (0, common_1.Controller)('api/customers'),
+    (0, common_1.Controller)('customers'),
     __metadata("design:paramtypes", [customers_service_1.CustomersService])
 ], CustomersController);
 //# sourceMappingURL=customers.controller.js.map

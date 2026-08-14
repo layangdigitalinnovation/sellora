@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { CheckCircle2, Shield, CreditCard, ChevronRight, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, Shield, CreditCard, ChevronRight, ArrowLeft, Tag } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -17,6 +17,7 @@ function SubscriptionContent() {
   const [loading, setLoading] = useState(true);
   const [isCheckingOut, setIsCheckingOut] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
+  const [voucherCode, setVoucherCode] = useState('');
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -75,12 +76,14 @@ function SubscriptionContent() {
       const res = await fetch(`${apiUrl}/subscriptions/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.userId, packageId })
+        body: JSON.stringify({ userId: user.userId, packageId, voucherCode })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Checkout gagal');
 
-      if (data.checkoutUrl) {
+      if (data.bypassed) {
+        window.location.href = '/dashboard/subscription?status=success';
+      } else if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
         throw new Error('URL Pembayaran tidak ditemukan');
@@ -183,6 +186,22 @@ function SubscriptionContent() {
             <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto">
               {t('subscription_page.unlock_features') || 'Buka semua fitur eksklusif, hapus batasan, dan maksimalkan pendapatan toko Anda hari ini juga.'}
             </p>
+          </div>
+
+          {/* Voucher Section */}
+          <div className="max-w-md mx-auto mb-12">
+            <div className="bg-white/80 backdrop-blur-md p-4 rounded-3xl border border-slate-200/60 shadow-xl shadow-slate-200/30 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center shrink-0">
+                <Tag className="w-5 h-5 text-indigo-600" />
+              </div>
+              <input 
+                type="text" 
+                placeholder="Punya Kode Voucher?" 
+                value={voucherCode}
+                onChange={e => setVoucherCode(e.target.value.toUpperCase())}
+                className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-bold text-slate-800 placeholder:text-slate-400 placeholder:font-medium uppercase"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">

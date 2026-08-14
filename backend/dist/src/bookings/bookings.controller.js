@@ -58,7 +58,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BookingsController.prototype, "remove", null);
 exports.BookingsController = BookingsController = __decorate([
-    (0, common_1.Controller)('api/bookings'),
+    (0, common_1.Controller)('bookings'),
     __metadata("design:paramtypes", [bookings_service_1.BookingsService])
 ], BookingsController);
 //# sourceMappingURL=bookings.controller.js.map

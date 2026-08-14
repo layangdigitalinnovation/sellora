@@ -228,6 +228,8 @@ model UserSubscription {
   startDate  DateTime            @default(now())
   endDate    DateTime?
   paymentRef String?
+  voucherId  String?
+  voucher    Voucher?            @relation(fields: [voucherId], references: [id])
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   referralCommissions ReferralCommission[]
@@ -238,6 +240,16 @@ enum SubscriptionStatus {
   ACTIVE
   EXPIRED
   CANCELLED
+}
+
+model Voucher {
+  id              String             @id @default(uuid())
+  code            String             @unique
+  discountPercent Float
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  subscriptions   UserSubscription[]
 }
 
 model Category {

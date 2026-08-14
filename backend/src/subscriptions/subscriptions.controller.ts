@@ -14,7 +14,8 @@ export class SubscriptionsController {
   async checkout(@Body() body: any, @Req() req: any) {
     const userId = body.userId; // in real app, extracted from JWT
     const packageId = body.packageId;
-    return this.subscriptionsService.checkout(userId, packageId);
+    const voucherCode = body.voucherCode;
+    return this.subscriptionsService.checkout(userId, packageId, voucherCode);
   }
 
   @Post('webhook/xendit')

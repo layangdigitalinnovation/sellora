@@ -41,20 +41,61 @@ export class SubscriptionsService {
     });
   }
 
-  async checkout(userId: string, packageId: string) {
+  async checkout(userId: string, packageId: string, voucherCode?: string) {
     const pkg = await this.prisma.subscriptionPackage.findUnique({ where: { id: packageId } });
     if (!pkg) throw new NotFoundException('Package not found');
     
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
 
+    let voucher: any = null;
+    let finalPrice = pkg.price;
+    if (voucherCode) {
+      voucher = await this.prisma.voucher.findUnique({ where: { code: voucherCode } });
+      if (!voucher || !voucher.isActive) {
+        throw new BadRequestException('Invalid or inactive voucher code');
+      }
+      finalPrice = pkg.price - (pkg.price * (voucher.discountPercent / 100));
+      if (finalPrice < 0) finalPrice = 0;
+    }
+
     const subscription = await this.prisma.userSubscription.create({
       data: {
         userId,
         packageId,
-        status: 'PENDING',
+        status: finalPrice === 0 ? 'ACTIVE' : 'PENDING',
+        voucherId: voucher ? voucher.id : null,
       }
     });
+
+    if (finalPrice === 0) {
+      // Bypass payment gateway for 100% discount
+      const now = new Date();
+      const endDate = new Date(now);
+      if (pkg.billingPeriod === 'YEARLY') {
+        endDate.setFullYear(endDate.getFullYear() + 1);
+      } else {
+        endDate.setMonth(endDate.getMonth() + 1);
+      }
+
+      await this.prisma.$transaction([
+        this.prisma.userSubscription.update({
+          where: { id: subscription.id },
+          data: {
+            startDate: now,
+            endDate: endDate
+          }
+        }),
+        this.prisma.user.update({
+          where: { id: userId },
+          data: {
+            plan: (pkg.name.toUpperCase() as any) || 'PRO'
+          }
+        })
+      ]);
+
+      return { success: true, bypassed: true, subscriptionId: subscription.id };
+    }
 
     const secretKey = this.configService.get('XENDIT_SECRET_KEY') || 'xnd_development_placeholder';
     const authString = Buffer.from(`${secretKey}:`).toString('base64');
@@ -68,7 +109,7 @@ export class SubscriptionsService {
         },
         body: JSON.stringify({
           external_id: `sub_${subscription.id}`,
-          amount: pkg.price,
+          amount: finalPrice,
           description: `Pembayaran Langganan Paket ${pkg.name} (${pkg.billingPeriod})`,
           payer_email: user.email,
           customer: {

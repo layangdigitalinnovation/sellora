@@ -81,7 +81,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], StoresController.prototype, "getBySlug", null);
 exports.StoresController = StoresController = __decorate([
-    (0, common_1.Controller)('api/stores'),
+    (0, common_1.Controller)('stores'),
     __metadata("design:paramtypes", [stores_service_1.StoresService])
 ], StoresController);
 //# sourceMappingURL=stores.controller.js.map

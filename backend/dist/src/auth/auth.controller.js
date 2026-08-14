@@ -22,9 +22,18 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     async login(body) {
+        if (!body || !body.email || !body.password) {
+            return {
+                status: 400,
+                message: 'Email and password are required',
+            };
+        }
         const user = await this.authService.validateUser(body.email, body.password);
         if (!user) {
-            return { status: 401, message: 'Invalid credentials' };
+            return {
+                status: 401,
+                message: 'Invalid credentials',
+            };
         }
         return this.authService.login(user);
     }
@@ -61,7 +70,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getProfile", null);
 exports.AuthController = AuthController = __decorate([
-    (0, common_1.Controller)('api/auth'),
+    (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

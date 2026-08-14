@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete } from '@nestjs/common';
 import { AdminService } from './admin.service';
 
 @Controller('admin')
@@ -28,5 +28,26 @@ export class AdminController {
   @Get('backfill')
   async backfill() {
     return this.adminService.backfillCustomers();
+  }
+
+  // Voucher Management Endpoints
+  @Get('vouchers')
+  async getVouchers() {
+    return this.adminService.getVouchers();
+  }
+
+  @Post('vouchers')
+  async createVoucher(@Body() body: { code: string; discountPercent: number; isActive?: boolean }) {
+    return this.adminService.createVoucher(body);
+  }
+
+  @Put('vouchers/:id')
+  async updateVoucher(@Param('id') id: string, @Body() body: { code?: string; discountPercent?: number; isActive?: boolean }) {
+    return this.adminService.updateVoucher(id, body);
+  }
+
+  @Delete('vouchers/:id')
+  async deleteVoucher(@Param('id') id: string) {
+    return this.adminService.deleteVoucher(id);
   }
 }

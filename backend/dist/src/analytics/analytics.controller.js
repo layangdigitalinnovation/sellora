@@ -69,7 +69,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AnalyticsController.prototype, "getChart", null);
 exports.AnalyticsController = AnalyticsController = __decorate([
-    (0, common_1.Controller)('api/analytics'),
+    (0, common_1.Controller)('analytics'),
     __metadata("design:paramtypes", [analytics_service_1.AnalyticsService])
 ], AnalyticsController);
 //# sourceMappingURL=analytics.controller.js.map

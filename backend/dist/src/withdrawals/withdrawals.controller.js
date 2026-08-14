@@ -56,7 +56,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], WithdrawalsController.prototype, "updateBankDetails", null);
 exports.WithdrawalsController = WithdrawalsController = __decorate([
-    (0, common_1.Controller)('api/withdrawals'),
+    (0, common_1.Controller)('withdrawals'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [withdrawals_service_1.WithdrawalsService])
 ], WithdrawalsController);

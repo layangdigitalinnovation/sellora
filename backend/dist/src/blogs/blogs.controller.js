@@ -122,7 +122,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BlogsController.prototype, "deleteCategory", null);
 exports.BlogsController = BlogsController = __decorate([
-    (0, common_1.Controller)('api/blogs'),
+    (0, common_1.Controller)('blogs'),
     __metadata("design:paramtypes", [blogs_service_1.BlogsService])
 ], BlogsController);
 //# sourceMappingURL=blogs.controller.js.map

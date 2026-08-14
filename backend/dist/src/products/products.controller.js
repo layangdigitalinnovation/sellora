@@ -82,7 +82,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "remove", null);
 exports.ProductsController = ProductsController = __decorate([
-    (0, common_1.Controller)('api/products'),
+    (0, common_1.Controller)('products'),
     __metadata("design:paramtypes", [products_service_1.ProductsService])
 ], ProductsController);
 //# sourceMappingURL=products.controller.js.map

@@ -126,7 +126,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PaymentsController.prototype, "downloadPdf", null);
 exports.PaymentsController = PaymentsController = __decorate([
-    (0, common_1.Controller)('api/payments'),
+    (0, common_1.Controller)('payments'),
     __metadata("design:paramtypes", [payments_service_1.PaymentsService,
         storage_service_1.StorageService,
         subscriptions_service_1.SubscriptionsService])
