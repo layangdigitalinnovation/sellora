@@ -25,7 +25,9 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
+        let apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        if (apiUrl === '/api' || !apiUrl) apiUrl = 'https://api.dijaminsuka.com';
+        apiUrl = apiUrl.replace(/\/$/, '');
 
         const res = await fetch(`${apiUrl}/subscriptions/packages`);
         if (res.ok) {
