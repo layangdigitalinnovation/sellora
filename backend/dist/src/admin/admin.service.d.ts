@@ -62,6 +62,7 @@ export declare class AdminService {
             startDate: Date;
             endDate: Date | null;
             packageId: string;
+            voucherId: string | null;
         })[];
     } & {
         id: string;
@@ -83,4 +84,44 @@ export declare class AdminService {
     })[]>;
     getSettings(): Promise<Record<string, string>>;
     updateSettings(data: Record<string, string>): Promise<Record<string, string>>;
+    getVouchers(): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        code: string;
+        discountPercent: number;
+    }[]>;
+    createVoucher(data: {
+        code: string;
+        discountPercent: number;
+        isActive?: boolean;
+    }): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        code: string;
+        discountPercent: number;
+    }>;
+    updateVoucher(id: string, data: {
+        code?: string;
+        discountPercent?: number;
+        isActive?: boolean;
+    }): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        code: string;
+        discountPercent: number;
+    }>;
+    deleteVoucher(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        code: string;
+        discountPercent: number;
+    }>;
 }

@@ -35,6 +35,18 @@ let AdminController = class AdminController {
     async backfill() {
         return this.adminService.backfillCustomers();
     }
+    async getVouchers() {
+        return this.adminService.getVouchers();
+    }
+    async createVoucher(body) {
+        return this.adminService.createVoucher(body);
+    }
+    async updateVoucher(id, body) {
+        return this.adminService.updateVoucher(id, body);
+    }
+    async deleteVoucher(id) {
+        return this.adminService.deleteVoucher(id);
+    }
 };
 exports.AdminController = AdminController;
 __decorate([
@@ -68,6 +80,34 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "backfill", null);
+__decorate([
+    (0, common_1.Get)('vouchers'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getVouchers", null);
+__decorate([
+    (0, common_1.Post)('vouchers'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "createVoucher", null);
+__decorate([
+    (0, common_1.Put)('vouchers/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "updateVoucher", null);
+__decorate([
+    (0, common_1.Delete)('vouchers/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "deleteVoucher", null);
 exports.AdminController = AdminController = __decorate([
     (0, common_1.Controller)('admin'),
     __metadata("design:paramtypes", [admin_service_1.AdminService])

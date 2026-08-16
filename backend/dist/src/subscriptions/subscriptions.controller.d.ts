@@ -14,8 +14,15 @@ export declare class SubscriptionsController {
         features: import("@prisma/client/runtime/client").JsonValue;
     }[]>;
     checkout(body: any, req: any): Promise<{
+        success: boolean;
+        bypassed: boolean;
+        subscriptionId: string;
+        checkoutUrl?: undefined;
+    } | {
         checkoutUrl: any;
         subscriptionId: string;
+        success?: undefined;
+        bypassed?: undefined;
     }>;
     xenditWebhook(body: any, req: any): Promise<{
         success: boolean;

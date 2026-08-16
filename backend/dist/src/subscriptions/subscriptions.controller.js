@@ -26,7 +26,8 @@ let SubscriptionsController = class SubscriptionsController {
     async checkout(body, req) {
         const userId = body.userId;
         const packageId = body.packageId;
-        return this.subscriptionsService.checkout(userId, packageId);
+        const voucherCode = body.voucherCode;
+        return this.subscriptionsService.checkout(userId, packageId, voucherCode);
     }
     async xenditWebhook(body, req) {
         const webhookToken = req.headers['x-callback-token'];

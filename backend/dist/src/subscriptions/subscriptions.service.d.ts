@@ -48,9 +48,16 @@ export declare class SubscriptionsService {
         billingPeriod: string;
         features: import("@prisma/client/runtime/client").JsonValue;
     }>;
-    checkout(userId: string, packageId: string): Promise<{
+    checkout(userId: string, packageId: string, voucherCode?: string): Promise<{
+        success: boolean;
+        bypassed: boolean;
+        subscriptionId: string;
+        checkoutUrl?: undefined;
+    } | {
         checkoutUrl: any;
         subscriptionId: string;
+        success?: undefined;
+        bypassed?: undefined;
     }>;
     handleWebhook(data: any, callbackToken: string): Promise<{
         success: boolean;
@@ -77,5 +84,6 @@ export declare class SubscriptionsService {
         startDate: Date;
         endDate: Date | null;
         packageId: string;
+        voucherId: string | null;
     }) | null>;
 }

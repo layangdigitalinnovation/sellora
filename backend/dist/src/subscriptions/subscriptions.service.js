@@ -49,20 +49,58 @@ let SubscriptionsService = class SubscriptionsService {
             data
         });
     }
-    async checkout(userId, packageId) {
+    async checkout(userId, packageId, voucherCode) {
         const pkg = await this.prisma.subscriptionPackage.findUnique({ where: { id: packageId } });
         if (!pkg)
             throw new common_1.NotFoundException('Package not found');
         const user = await this.prisma.user.findUnique({ where: { id: userId } });
         if (!user)
             throw new common_1.NotFoundException('User not found');
+        let voucher = null;
+        let finalPrice = pkg.price;
+        if (voucherCode) {
+            voucher = await this.prisma.voucher.findUnique({ where: { code: voucherCode } });
+            if (!voucher || !voucher.isActive) {
+                throw new common_1.BadRequestException('Invalid or inactive voucher code');
+            }
+            finalPrice = pkg.price - (pkg.price * (voucher.discountPercent / 100));
+            if (finalPrice < 0)
+                finalPrice = 0;
+        }
         const subscription = await this.prisma.userSubscription.create({
             data: {
                 userId,
                 packageId,
-                status: 'PENDING',
+                status: finalPrice === 0 ? 'ACTIVE' : 'PENDING',
+                voucherId: voucher ? voucher.id : null,
             }
         });
+        if (finalPrice === 0) {
+            const now = new Date();
+            const endDate = new Date(now);
+            if (pkg.billingPeriod === 'YEARLY') {
+                endDate.setFullYear(endDate.getFullYear() + 1);
+            }
+            else {
+                endDate.setMonth(endDate.getMonth() + 1);
+            }
+            await this.prisma.$transaction([
+                this.prisma.userSubscription.update({
+                    where: { id: subscription.id },
+                    data: {
+                        startDate: now,
+                        endDate: endDate
+                    }
+                }),
+                this.prisma.user.update({
+                    where: { id: userId },
+                    data: {
+                        plan: pkg.name.toUpperCase() || 'PRO'
+                    }
+                })
+            ]);
+            return { success: true, bypassed: true, subscriptionId: subscription.id };
+        }
         const secretKey = this.configService.get('XENDIT_SECRET_KEY') || 'xnd_development_placeholder';
         const authString = Buffer.from(`${secretKey}:`).toString('base64');
         try {
@@ -74,7 +112,7 @@ let SubscriptionsService = class SubscriptionsService {
                 },
                 body: JSON.stringify({
                     external_id: `sub_${subscription.id}`,
-                    amount: pkg.price,
+                    amount: finalPrice,
                     description: `Pembayaran Langganan Paket ${pkg.name} (${pkg.billingPeriod})`,
                     payer_email: user.email,
                     customer: {

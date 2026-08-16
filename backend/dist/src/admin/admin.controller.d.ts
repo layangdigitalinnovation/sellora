@@ -58,6 +58,7 @@ export declare class AdminController {
             startDate: Date;
             endDate: Date | null;
             packageId: string;
+            voucherId: string | null;
         })[];
     } & {
         id: string;
@@ -82,5 +83,45 @@ export declare class AdminController {
     backfill(): Promise<{
         success: boolean;
         message: string;
+    }>;
+    getVouchers(): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        code: string;
+        discountPercent: number;
+    }[]>;
+    createVoucher(body: {
+        code: string;
+        discountPercent: number;
+        isActive?: boolean;
+    }): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        code: string;
+        discountPercent: number;
+    }>;
+    updateVoucher(id: string, body: {
+        code?: string;
+        discountPercent?: number;
+        isActive?: boolean;
+    }): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        code: string;
+        discountPercent: number;
+    }>;
+    deleteVoucher(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        code: string;
+        discountPercent: number;
     }>;
 }

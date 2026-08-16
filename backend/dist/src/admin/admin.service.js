@@ -155,6 +155,31 @@ let AdminService = class AdminService {
         }
         return this.getSettings();
     }
+    async getVouchers() {
+        return this.prisma.voucher.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+    async createVoucher(data) {
+        return this.prisma.voucher.create({
+            data: {
+                code: data.code,
+                discountPercent: data.discountPercent,
+                isActive: data.isActive ?? true
+            }
+        });
+    }
+    async updateVoucher(id, data) {
+        return this.prisma.voucher.update({
+            where: { id },
+            data
+        });
+    }
+    async deleteVoucher(id) {
+        return this.prisma.voucher.delete({
+            where: { id }
+        });
+    }
 };
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([
